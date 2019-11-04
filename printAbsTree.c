@@ -30,6 +30,11 @@ void print(char *string) {
     printf("%s, ", string);
 }
 
+void printArgs(Expr *expr) {
+    printExpr(expr);
+    printf(",");
+}
+
 char *getName(int operator) {
 
     if (oprStr == NULL) {
@@ -160,7 +165,7 @@ void printCmd(Command *cmd) {
             break;
         case FUNCTION_CMD:
             printf("%s(", cmd->attr.funcCall.functionName);
-            iterateList(cmd->attr.funcCall.args, (void (*)(void *)) printExpr);
+            iterateList(cmd->attr.funcCall.args, (void (*)(void *)) printArgs);
             printf(");\n");
             break;
         default:
