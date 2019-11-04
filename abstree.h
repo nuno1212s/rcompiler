@@ -43,7 +43,8 @@ struct _Command {
         IF_CMD,
         IF_ELSE_CMD,
         VAR_CMD,
-        COMPOUND_CMD
+        COMPOUND_CMD,
+        FUNCTION_CMD
     } command;
 
     union {
@@ -80,6 +81,14 @@ struct _Command {
             LinkedList *commands;
 
         } compound;
+
+        struct {
+
+            char *functionName;
+
+            LinkedList *args;
+
+        } funcCall;
 
     } attr;
 };
@@ -126,6 +135,8 @@ Command *ast_expr(Expr *expr);
 Command *ast_var(char *name, Expr *expr);
 
 Command *ast_compound(LinkedList *);
+
+Command *ast_funcCall(char *name, LinkedList *);
 
 Function *ast_function(char *name, LinkedList *, Command *);
 

@@ -130,6 +130,18 @@ Command *ast_compound(LinkedList *list) {
     return nCmd;
 }
 
+Command *ast_funcCall(char *name, LinkedList *list) {
+
+    Command *nCmd = malloc(sizeof(Command));
+
+    nCmd->command = FUNCTION_CMD;
+
+    nCmd->attr.funcCall.functionName = name;
+    nCmd->attr.funcCall.args = list;
+
+    return nCmd;
+}
+
 Function *ast_function(char *name, LinkedList *args, Command *command) {
 
     Function *func = malloc(sizeof(Function));

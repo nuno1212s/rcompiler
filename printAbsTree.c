@@ -158,6 +158,11 @@ void printCmd(Command *cmd) {
             printExpr(cmd->attr.value);
             printf(";\n");
             break;
+        case FUNCTION_CMD:
+            printf("%s(", cmd->attr.funcCall.functionName);
+            iterateList(cmd->attr.funcCall.args, (void (*)(void *)) printExpr);
+            printf(");\n");
+            break;
         default:
 //            printf("%p", cmd);
             printf("Failed %s", getCmdName(cmd));

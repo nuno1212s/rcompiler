@@ -48,7 +48,7 @@
   char *nameValue;
   Expr* exprValue;
   Command* cmdValue;
-  LinkedList* cmdList, *nameList;
+  LinkedList* cmdList, *nameList, *exprList;
   Function* funcValue;
 }
 
@@ -58,6 +58,7 @@
 %type <cmdValue> cmd
 %type <cmdList> cmd_list
 %type <nameList> name_list
+%type <exprList> expr_list
 %type <funcValue> func
 
 // Use "%code requires" to make declarations go
@@ -111,6 +112,20 @@ cmd_list:
   }
   ;
 
+expr_list:
+  expr COMMA expr_list {
+    $$ = concatStart($1, $3);
+  }
+  |
+  expr {
+    $$ = mkList($1);
+  }
+  |
+  {
+    $$ = mkEmptyList();
+  }
+  ;
+
 cmd:
   OPENBRACKETS cmd_list CLOSEBRACKETS {
     //printf("identify list\n");
@@ -130,6 +145,10 @@ cmd:
   VAR NAME ASSIGNMENT expr SMCL {
     //printf("var statement identified\n");
     $$ = ast_var($2, $4);
+  }
+  |
+  NAME OPENPARENTHESIS expr_list CLOSEPARENTHESIS SMCL {
+    $$ = ast_funcCall($1, $3);
   }
   |
   expr SMCL {

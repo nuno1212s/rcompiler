@@ -44,7 +44,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 65 "parser.bison"
+#line 66 "parser.bison"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -103,7 +103,7 @@ union YYSTYPE
   char *nameValue;
   Expr* exprValue;
   Command* cmdValue;
-  LinkedList* cmdList, *nameList;
+  LinkedList* cmdList, *nameList, *exprList;
   Function* funcValue;
 
 #line 110 "parser.h"

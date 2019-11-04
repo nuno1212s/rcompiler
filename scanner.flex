@@ -44,7 +44,7 @@ int yyline = 1;
 "let" { return VAR; }
 "fn" { return FN; }
 
-[a-zA-Z][0-9a-zA-Z]* {
+[a-zA-Z][0-9a-zA-Z\_]* {
     yylval.nameValue = strdup(yytext);
     return NAME;
 }
