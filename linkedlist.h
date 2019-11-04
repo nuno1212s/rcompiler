@@ -22,6 +22,8 @@ struct _LinkedList {
 
 typedef struct _LinkedList LinkedList;
 
+LinkedList *mkEmptyList();
+
 LinkedList *mkList(void *value);
 
 LinkedList *concatLast(LinkedList *list, void *value);

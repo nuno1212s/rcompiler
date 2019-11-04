@@ -4,7 +4,7 @@
 
 char *oprStr = NULL;
 
-const char * getCmdName(Command *cmd) {
+const char *getCmdName(Command *cmd) {
 
     switch (cmd->command) {
         case EMPTY_CMD:
@@ -19,13 +19,15 @@ const char * getCmdName(Command *cmd) {
             return "VAR_CMD";
         case COMPOUND_CMD:
             return "COMPOUND_CMD";
-        case ASSIGNMENT_CMD:
-            return "ASSIGNMENT_CMD";
         default:
             printf("%d", cmd->command);
             return "";
     }
 
+}
+
+void print(char *string) {
+    printf("%s, ", string);
 }
 
 char *getName(int operator) {
@@ -115,6 +117,12 @@ void printExpr(Expr *expr) {
             printExpr(expr->attr.op.right);
             break;
         }
+        case E_ASSIGNMENT: {
+            printf("%s = ", expr->attr.assignment.name);
+
+            printExpr(expr->attr.assignment.value);
+            break;
+        }
     }
 }
 
@@ -122,7 +130,7 @@ void printCmd(Command *cmd) {
 
     switch (cmd->command) {
         case EMPTY_CMD:
-            printf(";");
+            printf(";\n");
             break;
         case WHILE_CMD:
             printf("while (");
@@ -139,16 +147,16 @@ void printCmd(Command *cmd) {
         case VAR_CMD:
             printf("var %s = ", cmd->attr.varDef.varName);
             printExpr(cmd->attr.varDef.expr);
-            printf(";");
+            printf(";\n");
             break;
         case COMPOUND_CMD:
             printf("{\n");
-            iterateList(cmd->attr.compound.commands, (void (*)(void*)) printCmd);
-            printf("\n}");
+            iterateList(cmd->attr.compound.commands, (void (*)(void *)) printCmd);
+            printf("}\n");
             break;
-        case ASSIGNMENT_CMD:
-            printf("%s = ", cmd->attr.assignment.varName);
-            printExpr(cmd->attr.assignment.expr);
+        case EXPR_CMD:
+            printExpr(cmd->attr.value);
+            printf(";\n");
             break;
         default:
 //            printf("%p", cmd);
@@ -156,4 +164,15 @@ void printCmd(Command *cmd) {
             break;
     }
 
+}
+
+void printFunc(Function *f) {
+
+    printf("fn %s(", f->name);
+
+    iterateList(f->args, (void (*)(void *)) print);
+
+    printf(")");
+
+    printCmd(f->command);
 }

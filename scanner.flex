@@ -37,10 +37,12 @@ int yyline = 1;
 "}" { return CLOSEBRACKETS; }
 ";" { return SMCL; }
 "=" { return ASSIGNMENT; }
+"," { return COMMA; }
 "if" { return IF; }
 "while" { return WHILE; }
 "var" { return VAR; }
 "let" { return VAR; }
+"fn" { return FN; }
 
 [a-zA-Z][0-9a-zA-Z]* {
     yylval.nameValue = strdup(yytext);

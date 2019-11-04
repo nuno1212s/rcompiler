@@ -44,7 +44,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 60 "parser.bison"
+#line 65 "parser.bison"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,7 +57,7 @@ extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
 
-Command* root;
+Function* root;
 
 #line 63 "parser.h"
 
@@ -87,7 +87,9 @@ Command* root;
     CLOSEBRACKETS = 276,
     VAR = 277,
     IF = 278,
-    WHILE = 279
+    WHILE = 279,
+    COMMA = 280,
+    FN = 281
   };
 #endif
 
@@ -95,15 +97,16 @@ Command* root;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 44 "parser.bison"
+#line 46 "parser.bison"
 
   int intValue;
   char *nameValue;
   Expr* exprValue;
   Command* cmdValue;
-  LinkedList* cmdList;
+  LinkedList* cmdList, *nameList;
+  Function* funcValue;
 
-#line 107 "parser.h"
+#line 110 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

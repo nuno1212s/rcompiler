@@ -1,1 +1,1 @@
-if (a < 2) { a = (1 + 2); b = (2 + 3); }
+fn main(teste, teste2) {if (a < 2) { a = (1 + 2); let b = (2 + 3); }}

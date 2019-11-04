@@ -32,7 +32,7 @@ Expr *ast_operation
     return node;
 }
 
-Expr *ast_binary(int operator, Expr *left, Expr* right) {
+Expr *ast_binary(int operator, Expr *left, Expr *right) {
 
     Expr *node = (Expr *) malloc(sizeof(Expr));
 
@@ -40,6 +40,16 @@ Expr *ast_binary(int operator, Expr *left, Expr* right) {
     node->attr.op.operator = operator;
     node->attr.op.left = left;
     node->attr.op.right = right;
+
+    return node;
+}
+
+Expr *ast_assignment(char *name, Expr *value) {
+    Expr *node = (Expr *) malloc(sizeof(Expr));
+
+    node->kind = E_ASSIGNMENT;
+    node->attr.assignment.name = name;
+    node->attr.assignment.value = value;
 
     return node;
 }
@@ -64,7 +74,7 @@ Command *ast_if(Expr *expr, Command *cmd) {
     return nCmd;
 }
 
-Command *ast_while (Expr *expr, Command *cmd) {
+Command *ast_while(Expr *expr, Command *cmd) {
     Command *nCmd = malloc(sizeof(Command));
 
     nCmd->command = WHILE_CMD;
@@ -75,7 +85,7 @@ Command *ast_while (Expr *expr, Command *cmd) {
     return nCmd;
 }
 
-Command *ast_if_then_else (Expr *expr, Command *ifThen, Command* elseThen) {
+Command *ast_if_then_else(Expr *expr, Command *ifThen, Command *elseThen) {
 
     Command *nCmd = malloc(sizeof(Command));
 
@@ -88,18 +98,17 @@ Command *ast_if_then_else (Expr *expr, Command *ifThen, Command* elseThen) {
     return nCmd;
 }
 
-Command *ast_eq (char *name, Expr *expr) {
+Command *ast_expr(Expr *expr) {
     Command *nCmd = malloc(sizeof(Command));
 
-    nCmd->command = ASSIGNMENT_CMD;
+    nCmd->command = EXPR_CMD;
 
-    nCmd->attr.assignment.varName = name;
-    nCmd->attr.assignment.expr = expr;
+    nCmd->attr.value = expr;
 
     return nCmd;
 }
 
-Command *ast_var (char *name, Expr *expr) {
+Command *ast_var(char *name, Expr *expr) {
 
     Command *nCmd = malloc(sizeof(Command));
 
@@ -119,4 +128,15 @@ Command *ast_compound(LinkedList *list) {
     nCmd->attr.compound.commands = list;
 
     return nCmd;
+}
+
+Function *ast_function(char *name, LinkedList *args, Command *command) {
+
+    Function *func = malloc(sizeof(Function));
+
+    func->name = name;
+    func->args = args;
+    func->command = command;
+
+    return func;
 }

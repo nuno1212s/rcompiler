@@ -11,7 +11,8 @@ struct _Expr {
         E_INTEGER,
         E_NAME,
         E_OPERATION,
-        E_BOOL
+        E_BOOL,
+        E_ASSIGNMENT
     } kind;
 
     union {
@@ -23,6 +24,12 @@ struct _Expr {
             struct _Expr *left;
             struct _Expr *right;
         } op; // for binary expressions
+
+        struct {
+            char *name;
+
+            struct _Expr *value;
+        } assignment;
     } attr;
 
 };
@@ -31,15 +38,17 @@ struct _Command {
 
     enum {
         EMPTY_CMD = 0,
+        EXPR_CMD,
         WHILE_CMD,
         IF_CMD,
         IF_ELSE_CMD,
         VAR_CMD,
-        COMPOUND_CMD,
-        ASSIGNMENT_CMD
+        COMPOUND_CMD
     } command;
 
     union {
+        struct _Expr *value;
+
         struct {
 
             struct _Expr *expr;
@@ -64,7 +73,7 @@ struct _Command {
 
             struct _Expr *expr;
 
-        } varDef, assignment;
+        } varDef;
 
         struct {
 
@@ -75,9 +84,21 @@ struct _Command {
     } attr;
 };
 
+struct _Function {
+
+    char *name;
+
+    LinkedList *args;
+
+    struct _Command *command;
+
+};
+
 typedef struct _Expr Expr; // Convenience typedef
 
 typedef struct _Command Command; //Convenience typedef
+
+typedef struct _Function Function;
 
 // Constructor functions (see implementation in ast.c)
 Expr *ast_integer(int v);
@@ -88,6 +109,10 @@ Expr *ast_operation(int operator, Expr *left, Expr *right);
 
 Expr *ast_binary(int operator, Expr *left, Expr* right);
 
+Expr *ast_assignment(char *name, Expr *value);
+
+Expr *ast_parenthesis(Expr *value);
+
 Command *ast_empty();
 
 Command *ast_if(Expr *expr, Command* cmd);
@@ -96,10 +121,12 @@ Command *ast_while(Expr *expr, Command *cmd);
 
 Command *ast_if_then_else(Expr *expr, Command* cmdIf, Command* cmdElse);
 
-Command *ast_eq(char *name, Expr *expr);
+Command *ast_expr(Expr *expr);
 
 Command *ast_var(char *name, Expr *expr);
 
 Command *ast_compound(LinkedList *);
+
+Function *ast_function(char *name, LinkedList *, Command *);
 
 #endif

@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     } //  yyin = stdin
 
     if (yyparse() == 0) {
-        printCmd(root);
+        printFunc(root);
     }
 
     return 0;

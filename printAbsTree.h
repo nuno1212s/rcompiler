@@ -7,8 +7,10 @@
 
 #include "abstree.h"
 
-void printExpr(Expr*);
+void printExpr(Expr *);
 
-void printCmd(Command*);
+void printCmd(Command *);
+
+void printFunc(Function *);
 
 #endif //COMPILADORES_PRINTABSTREE_H

@@ -32,6 +32,14 @@ void eraseNode(Node *node, Node *prev, Node *next) {
 
 }
 
+LinkedList *mkEmptyList() {
+    LinkedList *list = (LinkedList *) malloc(sizeof(LinkedList));
+
+    list->size = 0;
+
+    return list;
+}
+
 LinkedList *mkList(void *value) {
 
     LinkedList *list = (LinkedList *) malloc(sizeof(LinkedList));
@@ -62,8 +70,6 @@ LinkedList *concatStart(void *value, LinkedList *list) {
 void iterateList(LinkedList *list, void (*printFunc)(void *)) {
 
     Node *current = list->first;
-
-    printf("%d", list->size);
 
     while (current != NULL) {
 
