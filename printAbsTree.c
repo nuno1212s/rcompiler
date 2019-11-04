@@ -1,8 +1,32 @@
-#include "abstree.h"
 #include "parser.h"
 #include <stdio.h>
+#include "printAbsTree.h"
 
 char *oprStr = NULL;
+
+const char * getCmdName(Command *cmd) {
+
+    switch (cmd->command) {
+        case EMPTY_CMD:
+            return "EMPTY_CMD";
+        case WHILE_CMD:
+            return "WHILE_CMD";
+        case IF_CMD:
+            return "IF_CMD";
+        case IF_ELSE_CMD:
+            return "IF_ELSE_CMD";
+        case VAR_CMD:
+            return "VAR_CMD";
+        case COMPOUND_CMD:
+            return "COMPOUND_CMD";
+        case ASSIGNMENT_CMD:
+            return "ASSIGNMENT_CMD";
+        default:
+            printf("%d", cmd->command);
+            return "";
+    }
+
+}
 
 char *getName(int operator) {
 
@@ -72,6 +96,9 @@ void printExpr(Expr *expr) {
         case E_INTEGER:
             printf("%d", expr->attr.value);
             break;
+        case E_NAME:
+            printf("%s", expr->attr.name);
+            break;
         case E_OPERATION: {
             printExpr(expr->attr.op.left);
 
@@ -80,5 +107,53 @@ void printExpr(Expr *expr) {
             printExpr(expr->attr.op.right);
             break;
         }
+        case E_BOOL: {
+            printExpr(expr->attr.op.left);
+
+            printf(" %s ", getName(expr->attr.op.operator));
+
+            printExpr(expr->attr.op.right);
+            break;
+        }
     }
+}
+
+void printCmd(Command *cmd) {
+
+    switch (cmd->command) {
+        case EMPTY_CMD:
+            printf(";");
+            break;
+        case WHILE_CMD:
+            printf("while (");
+            printExpr(cmd->attr.whileCmd.expr);
+            printf(")");
+            printCmd(cmd->attr.whileCmd.cmd);
+            break;
+        case IF_CMD:
+            printf("if (");
+            printExpr(cmd->attr.ifCmd.expr);
+            printf(")");
+            printCmd(cmd->attr.ifCmd.cmd);
+            break;
+        case VAR_CMD:
+            printf("var %s = ", cmd->attr.varDef.varName);
+            printExpr(cmd->attr.varDef.expr);
+            printf(";");
+            break;
+        case COMPOUND_CMD:
+            printf("{\n");
+            iterateList(cmd->attr.compound.commands, (void (*)(void*)) printCmd);
+            printf("\n}");
+            break;
+        case ASSIGNMENT_CMD:
+            printf("%s = ", cmd->attr.assignment.varName);
+            printExpr(cmd->attr.assignment.expr);
+            break;
+        default:
+//            printf("%p", cmd);
+            printf("Failed %s", getCmdName(cmd));
+            break;
+    }
+
 }

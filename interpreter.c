@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "parser.h"
-#include "printAbsTree.c"
+#include "printAbsTree.h"
 
 int eval(Expr *expr) {
     int result = 0;
@@ -66,8 +66,9 @@ int main(int argc, char **argv) {
     } //  yyin = stdin
 
     if (yyparse() == 0) {
-        printExpr(root);
+        printCmd(root);
     }
+
     return 0;
 
 

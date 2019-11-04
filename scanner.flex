@@ -2,6 +2,7 @@
 // HEADERS
 #include <stdlib.h>
 #include "parser.h"
+#include <string.h>
 
 // variables maintained by the lexical analyser
 int yyline = 1;
@@ -30,8 +31,21 @@ int yyline = 1;
 "!=" { return NOTEQUAL; }
 "<=" { return LESSEQ; }
 ">=" { return GREATEREQ; }
+"(" { return OPENPARENTHESIS; }
+")" { return CLOSEPARENTHESIS; }
+"{" { return OPENBRACKETS; }
+"}" { return CLOSEBRACKETS; }
 ";" { return SMCL; }
+"=" { return ASSIGNMENT; }
+"if" { return IF; }
+"while" { return WHILE; }
+"var" { return VAR; }
+"let" { return VAR; }
+
+[a-zA-Z][0-9a-zA-Z]* {
+    yylval.nameValue = strdup(yytext);
+    return NAME;
+}
 
 .  { yyerror("unexpected character"); }
 %%
-

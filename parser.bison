@@ -1,6 +1,7 @@
 // Tokens
 %token
   INT
+  NAME
   MINUS
   PLUS
   MULT
@@ -12,8 +13,15 @@
   NOTEQUAL
   GREATEREQ
   LESSEQ
+  ASSIGNMENT
   SMCL
-
+  OPENPARENTHESIS
+  CLOSEPARENTHESIS
+  OPENBRACKETS
+  CLOSEBRACKETS
+  VAR
+  IF
+  WHILE
 
 // Operator associativity & precedence
 %left PLUS
@@ -27,6 +35,7 @@
 %left NOTEQUAL
 %left GREATEREQ
 %left LESSEQ
+%left ASSIGNMENT
 
 // Root-level grammar symbol
 %start program;
@@ -34,13 +43,17 @@
 // Types/values in association to grammar symbols.
 %union {
   int intValue;
+  char *nameValue;
   Expr* exprValue;
   Command* cmdValue;
+  LinkedList* cmdList;
 }
 
 %type <intValue> INT
+%type <nameValue> NAME
 %type <exprValue> expr
 %type <cmdValue> cmd
+%type <cmdList> cmd_list
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -48,6 +61,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "abstree.h"
+#include "linkedlist.h"
 
 extern int yylex();
 extern int yyline;
@@ -63,20 +77,50 @@ program: cmd { root = $1; }
 
 cmd_list:
   cmd SMCL cmd_list {
-
-
+    printf("Command with list\n");
+    $$ = concatStart($1, $3);
+  }
+  |
+  cmd SMCL {
+    printf("Command\n");
+    $$ = mkList($1);
   }
   ;
 
 cmd:
-  OPENBRACKETS cmd CLOSEBRACKETS {
+  OPENBRACKETS cmd_list CLOSEBRACKETS {
+    printf("identify list\n");
     $$ = ast_compound($2);
+  }
+  |
+  IF expr cmd {
+    printf("if statement identified\n");
+    $$ = ast_if($2, $3);
+  }
+  |
+  WHILE expr cmd {
+    printf("while statement identified\n");
+    $$ = ast_while($2, $3);
+  }
+  |
+  VAR NAME ASSIGNMENT expr {
+    printf("var statement identified\n");
+    $$ = ast_var($2, $4);
+  }
+  |
+  NAME ASSIGNMENT expr {
+    printf("name statement identified\n");
+    $$ = ast_eq($1, $3);
   }
   ;
 
 expr:
   INT {
     $$ = ast_integer($1);
+  }
+  |
+  NAME {
+    $$ = ast_name($1);
   }
   |
   expr PLUS expr {
@@ -121,6 +165,10 @@ expr:
   |
   expr LESSEQ expr {
     $$ = ast_binary(LESSEQ, $1, $3);
+  }
+  |
+  OPENPARENTHESIS expr CLOSEPARENTHESIS {
+    $$ = $2;
   }
   ;
 %%

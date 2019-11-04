@@ -4,6 +4,7 @@
 
 #include "linkedlist.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 Node *initNode(void *value, Node *next) {
 
@@ -15,7 +16,7 @@ Node *initNode(void *value, Node *next) {
     return node;
 }
 
-Node *initNode(void *value, Node *next, Node *prev) {
+Node *initNodeWithPrev(void *value, Node *next, Node *prev) {
     Node *node = initNode(value, next);
 
     prev->next = node;
@@ -44,14 +45,31 @@ LinkedList *mkList(void *value) {
     return list;
 }
 
-LinkedList* concatValue(LinkedList *list, void *value) {
+LinkedList *concatLast(LinkedList *list, void *value) {
 
-    list->last = initNode(value, NULL, list->last);
+    list->last = initNodeWithPrev(value, NULL, list->last);
+    list->size++;
 
 }
 
-LinkedList* concatValue(void *value, LinkedList* list) {
+LinkedList *concatStart(void *value, LinkedList *list) {
 
-    list->first = initNode(value, list->first, NULL);
+    list->first = initNode(value, list->first);
+    list->size++;
+
+}
+
+void iterateList(LinkedList *list, void (*printFunc)(void *)) {
+
+    Node *current = list->first;
+
+    printf("%d", list->size);
+
+    while (current != NULL) {
+
+        printFunc(current->value);
+
+        current = current->next;
+    }
 
 }

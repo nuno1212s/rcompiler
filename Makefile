@@ -1,5 +1,5 @@
 
-OBJS=scanner.o parser.o abstree.o interpreter.o
+OBJS=scanner.o parser.o abstree.o interpreter.o linkedlist.o printAbsTree.o
 INTERM=scanner.c parser.c parser.h
 PROGRAM=./interpreter
 CFLAGS=-g 

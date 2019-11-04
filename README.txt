@@ -97,8 +97,3 @@ d) In parser.bison change the grammar by:
 e) In printAbsTree.c : define a function printCmd(Cmd* command) which prints the abstract syntax tree stored in the structure pointed by command.
 
 f) Change the main function to print commands.
-
-
-
-
-

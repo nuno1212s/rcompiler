@@ -24,8 +24,10 @@ typedef struct _LinkedList LinkedList;
 
 LinkedList *mkList(void *value);
 
-LinkedList *concatValue(LinkedList *list, void *value);
+LinkedList *concatLast(LinkedList *list, void *value);
 
-LinkedList* concatValue(void *value, LinkedList *list);
+LinkedList *concatStart(void *value, LinkedList *list);
+
+void iterateList(LinkedList *, void (*)(void *));
 
 #endif //COMPILADORES_LINKEDLIST_H

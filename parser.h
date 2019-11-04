@@ -44,20 +44,22 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 44 "parser.bison"
+#line 60 "parser.bison"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "abstree.h"
+#include "linkedlist.h"
 
 extern int yylex();
 extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-Expr* root;
 
-#line 61 "parser.h"
+Command* root;
+
+#line 63 "parser.h"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -65,17 +67,27 @@ Expr* root;
   enum yytokentype
   {
     INT = 258,
-    MINUS = 259,
-    PLUS = 260,
-    MULT = 261,
-    DIV = 262,
-    REMAIN = 263,
-    GREATER = 264,
-    LESS = 265,
-    EQUAL = 266,
-    NOTEQUAL = 267,
-    GREATEREQ = 268,
-    LESSEQ = 269
+    NAME = 259,
+    MINUS = 260,
+    PLUS = 261,
+    MULT = 262,
+    DIV = 263,
+    REMAIN = 264,
+    GREATER = 265,
+    LESS = 266,
+    EQUAL = 267,
+    NOTEQUAL = 268,
+    GREATEREQ = 269,
+    LESSEQ = 270,
+    ASSIGNMENT = 271,
+    SMCL = 272,
+    OPENPARENTHESIS = 273,
+    CLOSEPARENTHESIS = 274,
+    OPENBRACKETS = 275,
+    CLOSEBRACKETS = 276,
+    VAR = 277,
+    IF = 278,
+    WHILE = 279
   };
 #endif
 
@@ -83,12 +95,15 @@ Expr* root;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 34 "parser.bison"
+#line 44 "parser.bison"
 
   int intValue;
+  char *nameValue;
   Expr* exprValue;
+  Command* cmdValue;
+  LinkedList* cmdList;
 
-#line 92 "parser.h"
+#line 107 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
