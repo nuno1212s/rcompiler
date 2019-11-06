@@ -54,3 +54,8 @@ Mkfile.old
 dkms.conf
 
 .idea/
+
+#Ignore compiled files
+*
+!*/
+!*.*
