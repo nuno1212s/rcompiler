@@ -21,6 +21,34 @@ Expr *ast_name(char *name) {
     return node;
 }
 
+Expr *ast_string(char *string) {
+    Expr *node = (Expr *) malloc(sizeof(Expr));
+
+    node->kind = E_STRING;
+
+    int strLen = strlen(string);
+
+    char *finalName = malloc(sizeof(char) * (strLen - 2));
+    //Remove the " from the string
+
+    memcpy(finalName, (string + 1), strLen - 2);
+
+    node->attr.name = finalName;
+
+    free(string);
+
+    return node;
+}
+
+Expr *ast_bool(int value) {
+    Expr * expr = malloc(sizeof(Expr));
+
+    expr->kind = E_BOOL_VALUE;
+
+    expr->attr.value = value;
+
+    return expr;
+}
 
 Expr *ast_operation
         (int operator, Expr *left, Expr *right) {
@@ -52,6 +80,18 @@ Expr *ast_assignment(char *name, Expr *value) {
     node->attr.assignment.value = value;
 
     return node;
+}
+
+Expr *ast_funcCall(char *name, LinkedList *list) {
+
+    Expr *nCmd = malloc(sizeof(Expr));
+
+    nCmd->kind = E_FUNC_CALL;
+
+    nCmd->attr.funcCall.functionName = name;
+    nCmd->attr.funcCall.args = list;
+
+    return nCmd;
 }
 
 Command *ast_empty() {
@@ -130,17 +170,6 @@ Command *ast_compound(LinkedList *list) {
     return nCmd;
 }
 
-Command *ast_funcCall(char *name, LinkedList *list) {
-
-    Command *nCmd = malloc(sizeof(Command));
-
-    nCmd->command = FUNCTION_CMD;
-
-    nCmd->attr.funcCall.functionName = name;
-    nCmd->attr.funcCall.args = list;
-
-    return nCmd;
-}
 
 Function *ast_function(char *name, LinkedList *args, Command *command) {
 

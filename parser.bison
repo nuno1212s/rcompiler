@@ -2,6 +2,7 @@
 %token
   INT
   NAME
+  STR
   MINUS
   PLUS
   MULT
@@ -24,6 +25,8 @@
   WHILE
   COMMA
   FN
+  TRUE
+  FALSE
 
 // Operator associativity & precedence
 %left PLUS
@@ -45,7 +48,7 @@
 // Types/values in association to grammar symbols.
 %union {
   int intValue;
-  char *nameValue;
+  char *nameValue, *strValue;
   Expr* exprValue;
   Command* cmdValue;
   LinkedList* cmdList, *nameList, *exprList;
@@ -54,6 +57,7 @@
 
 %type <intValue> INT
 %type <nameValue> NAME
+%type <strValue> STR
 %type <exprValue> expr
 %type <cmdValue> cmd
 %type <cmdList> cmd_list
@@ -147,10 +151,6 @@ cmd:
     $$ = ast_var($2, $4);
   }
   |
-  NAME OPENPARENTHESIS expr_list CLOSEPARENTHESIS SMCL {
-    $$ = ast_funcCall($1, $3);
-  }
-  |
   expr SMCL {
     $$ = ast_expr($1);
   }
@@ -163,6 +163,18 @@ expr:
   |
   NAME {
     $$ = ast_name($1);
+  }
+  |
+  STR {
+    $$ = ast_string($1);
+  }
+  |
+  TRUE {
+    $$ = ast_bool(1);
+  }
+  |
+  FALSE {
+    $$ = ast_bool(0);
   }
   |
   expr PLUS expr {
@@ -215,6 +227,10 @@ expr:
   |
   OPENPARENTHESIS expr CLOSEPARENTHESIS {
     $$ = $2;
+  }
+  |
+  NAME OPENPARENTHESIS expr_list CLOSEPARENTHESIS {
+    $$ = ast_funcCall($1, $3);
   }
   ;
 %%

@@ -44,7 +44,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 66 "parser.bison"
+#line 70 "parser.bison"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -68,28 +68,31 @@ Function* root;
   {
     INT = 258,
     NAME = 259,
-    MINUS = 260,
-    PLUS = 261,
-    MULT = 262,
-    DIV = 263,
-    REMAIN = 264,
-    GREATER = 265,
-    LESS = 266,
-    EQUAL = 267,
-    NOTEQUAL = 268,
-    GREATEREQ = 269,
-    LESSEQ = 270,
-    ASSIGNMENT = 271,
-    SMCL = 272,
-    OPENPARENTHESIS = 273,
-    CLOSEPARENTHESIS = 274,
-    OPENBRACKETS = 275,
-    CLOSEBRACKETS = 276,
-    VAR = 277,
-    IF = 278,
-    WHILE = 279,
-    COMMA = 280,
-    FN = 281
+    STR = 260,
+    MINUS = 261,
+    PLUS = 262,
+    MULT = 263,
+    DIV = 264,
+    REMAIN = 265,
+    GREATER = 266,
+    LESS = 267,
+    EQUAL = 268,
+    NOTEQUAL = 269,
+    GREATEREQ = 270,
+    LESSEQ = 271,
+    ASSIGNMENT = 272,
+    SMCL = 273,
+    OPENPARENTHESIS = 274,
+    CLOSEPARENTHESIS = 275,
+    OPENBRACKETS = 276,
+    CLOSEBRACKETS = 277,
+    VAR = 278,
+    IF = 279,
+    WHILE = 280,
+    COMMA = 281,
+    FN = 282,
+    TRUE = 283,
+    FALSE = 284
   };
 #endif
 
@@ -97,16 +100,16 @@ Function* root;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 46 "parser.bison"
+#line 49 "parser.bison"
 
   int intValue;
-  char *nameValue;
+  char *nameValue, *strValue;
   Expr* exprValue;
   Command* cmdValue;
   LinkedList* cmdList, *nameList, *exprList;
   Function* funcValue;
 
-#line 110 "parser.h"
+#line 113 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

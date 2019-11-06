@@ -106,6 +106,12 @@ void printExpr(Expr *expr) {
         case E_NAME:
             printf("%s", expr->attr.name);
             break;
+        case E_STRING:
+            printf("\"%s\"", expr->attr.name);
+            break;
+        case E_BOOL_VALUE:
+            printf("%s", (expr->attr.value ? "TRUE" : "FALSE"));
+            break;
         case E_OPERATION: {
             printExpr(expr->attr.op.left);
 
@@ -126,6 +132,12 @@ void printExpr(Expr *expr) {
             printf("%s = ", expr->attr.assignment.name);
 
             printExpr(expr->attr.assignment.value);
+            break;
+        }
+        case E_FUNC_CALL: {
+            printf("%s(", expr->attr.funcCall.functionName);
+            iterateList(expr->attr.funcCall.args, (void (*)(void *)) printArgs);
+            printf(")");
             break;
         }
     }
@@ -162,11 +174,6 @@ void printCmd(Command *cmd) {
         case EXPR_CMD:
             printExpr(cmd->attr.value);
             printf(";\n");
-            break;
-        case FUNCTION_CMD:
-            printf("%s(", cmd->attr.funcCall.functionName);
-            iterateList(cmd->attr.funcCall.args, (void (*)(void *)) printArgs);
-            printf(");\n");
             break;
         default:
 //            printf("%p", cmd);

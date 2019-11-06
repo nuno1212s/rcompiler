@@ -10,14 +10,17 @@ struct _Expr {
     enum {
         E_INTEGER,
         E_NAME,
+        E_STRING,
         E_OPERATION,
         E_BOOL,
-        E_ASSIGNMENT
+        E_BOOL_VALUE,
+        E_ASSIGNMENT,
+        E_FUNC_CALL
     } kind;
 
     union {
         int value; // for integer values
-        char *name; // for name values
+        char *name; // for name value
 
         struct {
             int operator; // PLUS, MINUS, etc
@@ -30,6 +33,14 @@ struct _Expr {
 
             struct _Expr *value;
         } assignment;
+
+        struct {
+
+            char *functionName;
+
+            LinkedList *args;
+
+        } funcCall;
     } attr;
 
 };
@@ -43,8 +54,7 @@ struct _Command {
         IF_CMD,
         IF_ELSE_CMD,
         VAR_CMD,
-        COMPOUND_CMD,
-        FUNCTION_CMD
+        COMPOUND_CMD
     } command;
 
     union {
@@ -82,14 +92,6 @@ struct _Command {
 
         } compound;
 
-        struct {
-
-            char *functionName;
-
-            LinkedList *args;
-
-        } funcCall;
-
     } attr;
 };
 
@@ -114,6 +116,10 @@ Expr *ast_integer(int v);
 
 Expr *ast_name(char *name);
 
+Expr *ast_string(char *string);
+
+Expr *ast_bool(int val);
+
 Expr *ast_operation(int operator, Expr *left, Expr *right);
 
 Expr *ast_binary(int operator, Expr *left, Expr* right);
@@ -121,6 +127,8 @@ Expr *ast_binary(int operator, Expr *left, Expr* right);
 Expr *ast_assignment(char *name, Expr *value);
 
 Expr *ast_parenthesis(Expr *value);
+
+Expr *ast_funcCall(char *name, LinkedList *);
 
 Command *ast_empty();
 
@@ -135,8 +143,6 @@ Command *ast_expr(Expr *expr);
 Command *ast_var(char *name, Expr *expr);
 
 Command *ast_compound(LinkedList *);
-
-Command *ast_funcCall(char *name, LinkedList *);
 
 Function *ast_function(char *name, LinkedList *, Command *);
 

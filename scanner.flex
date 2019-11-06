@@ -43,8 +43,16 @@ int yyline = 1;
 "var" { return VAR; }
 "let" { return VAR; }
 "fn" { return FN; }
+"true" { return TRUE; }
+"false" { return FALSE; }
 
-[a-zA-Z][0-9a-zA-Z\_]* {
+\".*\" {
+  yylval.strValue = strdup(yytext);
+
+  return STR;
+}
+
+[a-zA-Z][0-9a-zA-Z\_\!]* {
     yylval.nameValue = strdup(yytext);
     return NAME;
 }
