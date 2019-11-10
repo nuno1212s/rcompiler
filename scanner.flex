@@ -38,7 +38,10 @@ int yyline = 1;
 ";" { return SMCL; }
 "=" { return ASSIGNMENT; }
 "," { return COMMA; }
+"&&" { return BAND; }
+"||" { return BOR; }
 "&" { return AND; }
+"|" { return OR; }
 "if" { return IF; }
 "else" { return ELSE; }
 "while" { return WHILE; }

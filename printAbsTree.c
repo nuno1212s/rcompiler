@@ -98,6 +98,16 @@ char *getName(int operator) {
             oprStr[1] = '=';
             oprStr[2] = '\0';
             break;
+        case BAND:
+            oprStr[0] = '&';
+            oprStr[1] = '&';
+            oprStr[2] = '\0';
+            break;
+        case BOR:
+            oprStr[0] = '|';
+            oprStr[1] = '|';
+            oprStr[2] = '\0';
+            break;
         default:
             break;
     }
@@ -145,9 +155,9 @@ void printExprS(Expr *expr, int spaces) {
         }
         case E_ASSIGNMENT:
             printSpaces(spaces);
-            printf("=\n");
-            printSpaces(spaces + 1);
             printf("%s\n", expr->attr.assignment.name);
+            printSpaces(spaces);
+            printf("=\n");
             printExprS(expr->attr.assignment.value, spaces + 1);
             break;
         case E_FUNC_CALL: {

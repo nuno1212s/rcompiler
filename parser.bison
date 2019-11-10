@@ -4,6 +4,9 @@
   NAME
   STR
   AND
+  OR
+  BAND
+  BOR
   MINUS
   PLUS
   MULT
@@ -44,6 +47,10 @@
 %left LESSEQ
 %left ASSIGNMENT
 %left COMMA
+%left BAND
+%left BOR
+%left AND
+%left OR
 
 // Root-level grammar symbol
 %start program;
@@ -230,6 +237,14 @@ expr:
   |
   expr LESSEQ expr {
     $$ = ast_binary(LESSEQ, $1, $3);
+  }
+  |
+  expr BOR expr {
+    $$ = ast_binary(BOR, $1, $3);
+  }
+  |
+  expr BAND expr {
+    $$ = ast_binary(BAND, $1, $3);
   }
   |
   NAME ASSIGNMENT expr {
