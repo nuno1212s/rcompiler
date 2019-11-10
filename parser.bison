@@ -23,6 +23,7 @@
   CLOSEBRACKETS
   VAR
   IF
+  ELSE
   WHILE
   COMMA
   FN
@@ -87,7 +88,7 @@ Function* root;
 program: func { root = $1; }
 
 func:
-  FN NAME OPENPARENTHESIS expr_list CLOSEPARENTHESIS cmd {
+  FN NAME OPENPARENTHESIS name_list CLOSEPARENTHESIS cmd {
     $$ = ast_function($2, $4, $6);
   }
   ;
@@ -140,6 +141,10 @@ cmd:
   IF expr cmd {
     //printf("if statement identified\n");
     $$ = ast_if($2, $3);
+  }
+  |
+  IF expr cmd ELSE cmd {
+    $$ = ast_if_then_else($2, $3, $5);
   }
   |
   WHILE expr cmd {

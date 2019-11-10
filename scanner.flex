@@ -40,6 +40,7 @@ int yyline = 1;
 "," { return COMMA; }
 "&" { return AND; }
 "if" { return IF; }
+"else" { return ELSE; }
 "while" { return WHILE; }
 "var" { return VAR; }
 "let" { return VAR; }

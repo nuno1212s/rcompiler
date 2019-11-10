@@ -3,6 +3,7 @@
 #include "printAbsTree.h"
 
 char *oprStr = NULL;
+int globalSpaces = 0;
 
 const char *getCmdName(Command *cmd) {
 
@@ -26,8 +27,14 @@ const char *getCmdName(Command *cmd) {
 
 }
 
-void print(char *string) {
-    printf("%s, ", string);
+void printSpaces(int spaces) {
+    for (int i = 0; i < spaces; i++)
+        printf(" ");
+}
+
+void printName(char *name) {
+    printSpaces(globalSpaces);
+    printf("%s\n", name);
 }
 
 void printArgs(Expr *expr) {
@@ -35,10 +42,6 @@ void printArgs(Expr *expr) {
     printf(",");
 }
 
-void printSpaces(int spaces) {
-    for (int i = 0; i < spaces; i++)
-        printf(" ");
-}
 
 char *getName(int operator) {
 
@@ -101,7 +104,6 @@ char *getName(int operator) {
 
     return oprStr;
 }
-int globalSpaces = 0;
 
 void printExpr(Expr *expr) {
     printExprS(expr, globalSpaces);
@@ -232,6 +234,15 @@ void printCmdS(Command *cmd, int spaces) {
             printExprS(cmd->attr.ifCmd.expr, spaces + 1);
             printCmdS(cmd->attr.ifCmd.cmd, spaces);
             break;
+        case IF_ELSE_CMD:
+            printSpaces(spaces);
+            printf("IF\n");
+            printExprS(cmd->attr.ifElseCmd.expr, spaces + 1);
+            printCmdS(cmd->attr.ifElseCmd.cmd, spaces + 4);
+            printSpaces(spaces);
+            printf("ELSE\n");
+            printCmdS(cmd->attr.ifElseCmd.elsecmd, spaces + 4);
+            break;
         case VAR_CMD:
             printSpaces(spaces);
             printf("VAR %s\n", cmd->attr.varDef.varName);
@@ -305,7 +316,7 @@ void printFuncS(Function *f, int spaces) {
 
     globalSpaces = spaces + 1;
 
-    iterateList(f->args, (void (*)(void *)) printExpr);
+    iterateList(f->args, (void (*)(void *)) printName);
 
     globalSpaces = prevSpaces;
 
