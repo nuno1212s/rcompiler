@@ -10,6 +10,7 @@ struct _Expr {
     enum {
         E_INTEGER,
         E_NAME,
+        E_NAME_ADDR,
         E_STRING,
         E_OPERATION,
         E_BOOL,
@@ -115,6 +116,8 @@ typedef struct _Function Function;
 Expr *ast_integer(int v);
 
 Expr *ast_name(char *name);
+
+Expr *ast_name_addr(char *name);
 
 Expr *ast_string(char *string);
 

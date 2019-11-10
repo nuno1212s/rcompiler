@@ -44,7 +44,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 70 "parser.bison"
+#line 71 "parser.bison"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,30 +69,31 @@ Function* root;
     INT = 258,
     NAME = 259,
     STR = 260,
-    MINUS = 261,
-    PLUS = 262,
-    MULT = 263,
-    DIV = 264,
-    REMAIN = 265,
-    GREATER = 266,
-    LESS = 267,
-    EQUAL = 268,
-    NOTEQUAL = 269,
-    GREATEREQ = 270,
-    LESSEQ = 271,
-    ASSIGNMENT = 272,
-    SMCL = 273,
-    OPENPARENTHESIS = 274,
-    CLOSEPARENTHESIS = 275,
-    OPENBRACKETS = 276,
-    CLOSEBRACKETS = 277,
-    VAR = 278,
-    IF = 279,
-    WHILE = 280,
-    COMMA = 281,
-    FN = 282,
-    TRUE = 283,
-    FALSE = 284
+    AND = 261,
+    MINUS = 262,
+    PLUS = 263,
+    MULT = 264,
+    DIV = 265,
+    REMAIN = 266,
+    GREATER = 267,
+    LESS = 268,
+    EQUAL = 269,
+    NOTEQUAL = 270,
+    GREATEREQ = 271,
+    LESSEQ = 272,
+    ASSIGNMENT = 273,
+    SMCL = 274,
+    OPENPARENTHESIS = 275,
+    CLOSEPARENTHESIS = 276,
+    OPENBRACKETS = 277,
+    CLOSEBRACKETS = 278,
+    VAR = 279,
+    IF = 280,
+    WHILE = 281,
+    COMMA = 282,
+    FN = 283,
+    TRUE = 284,
+    FALSE = 285
   };
 #endif
 
@@ -100,7 +101,7 @@ Function* root;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 49 "parser.bison"
+#line 50 "parser.bison"
 
   int intValue;
   char *nameValue, *strValue;
@@ -109,7 +110,7 @@ union YYSTYPE
   LinkedList* cmdList, *nameList, *exprList;
   Function* funcValue;
 
-#line 113 "parser.h"
+#line 114 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

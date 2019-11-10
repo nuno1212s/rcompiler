@@ -38,6 +38,7 @@ int yyline = 1;
 ";" { return SMCL; }
 "=" { return ASSIGNMENT; }
 "," { return COMMA; }
+"&" { return AND; }
 "if" { return IF; }
 "while" { return WHILE; }
 "var" { return VAR; }

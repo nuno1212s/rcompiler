@@ -9,8 +9,14 @@
 
 void printExpr(Expr *);
 
+void printExprS(Expr *, int);
+
 void printCmd(Command *);
 
+void printCmdS(Command *, int);
+
 void printFunc(Function *);
+
+void printFuncS(Function *, int);
 
 #endif //COMPILADORES_PRINTABSTREE_H

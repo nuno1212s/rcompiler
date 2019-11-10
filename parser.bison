@@ -3,6 +3,7 @@
   INT
   NAME
   STR
+  AND
   MINUS
   PLUS
   MULT
@@ -86,7 +87,7 @@ Function* root;
 program: func { root = $1; }
 
 func:
-  FN NAME OPENPARENTHESIS name_list CLOSEPARENTHESIS cmd {
+  FN NAME OPENPARENTHESIS expr_list CLOSEPARENTHESIS cmd {
     $$ = ast_function($2, $4, $6);
   }
   ;
@@ -159,6 +160,10 @@ cmd:
 expr:
   INT {
     $$ = ast_integer($1);
+  }
+  |
+  AND NAME {
+    $$ = ast_name_addr($2);
   }
   |
   NAME {

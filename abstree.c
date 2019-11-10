@@ -21,6 +21,15 @@ Expr *ast_name(char *name) {
     return node;
 }
 
+Expr* ast_name_addr(char *name) {
+    Expr *node = (Expr*) malloc(sizeof(Expr));
+
+    node->kind = E_NAME_ADDR;
+    node->attr.name = name;
+
+    return node;
+}
+
 Expr *ast_string(char *string) {
     Expr *node = (Expr *) malloc(sizeof(Expr));
 
