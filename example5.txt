@@ -1,1 +1,1 @@
-fn main(var1, var2) { while (a) { ab(TRUE); let xy = true; } if (a < 2) { a = (1 + -2); let b = (2 + 3); println!("TESTE"); read_line(&x); } else { a(); }}
+fn main(var1, var2) { while (a) { ab(TRUE); let xy = true, yx = false; } if (a < 2) { a = (1 + -2); let b = (2 + 3); println!("TESTE"); read_line(&x); } else { a(); }}

@@ -43,6 +43,7 @@
 %left GREATEREQ
 %left LESSEQ
 %left ASSIGNMENT
+%left COMMA
 
 // Root-level grammar symbol
 %start program;
@@ -152,9 +153,9 @@ cmd:
     $$ = ast_while($2, $3);
   }
   |
-  VAR NAME ASSIGNMENT expr SMCL {
+  VAR expr_list SMCL {
     //printf("var statement identified\n");
-    $$ = ast_var($2, $4);
+    $$ = ast_var($2);
   }
   |
   expr SMCL {

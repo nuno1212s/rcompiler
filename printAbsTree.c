@@ -245,8 +245,17 @@ void printCmdS(Command *cmd, int spaces) {
             break;
         case VAR_CMD:
             printSpaces(spaces);
-            printf("VAR %s\n", cmd->attr.varDef.varName);
-            printExprS(cmd->attr.varDef.expr, spaces + 1);
+
+            printf("VAR \n");
+
+            int previous = globalSpaces;
+
+            globalSpaces = spaces + 1;
+
+            iterateList(cmd->attr.varDef.expr, (void (*)(void *)) printExpr);
+
+            globalSpaces = previous;
+
             break;
         case COMPOUND_CMD: {
             int previousSpaces = globalSpaces;

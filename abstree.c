@@ -157,13 +157,12 @@ Command *ast_expr(Expr *expr) {
     return nCmd;
 }
 
-Command *ast_var(char *name, Expr *expr) {
+Command *ast_var(LinkedList *expr) {
 
     Command *nCmd = malloc(sizeof(Command));
 
     nCmd->command = VAR_CMD;
 
-    nCmd->attr.varDef.varName = name;
     nCmd->attr.varDef.expr = expr;
 
     return nCmd;

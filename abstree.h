@@ -81,9 +81,7 @@ struct _Command {
 
         struct {
 
-            char *varName;
-
-            struct _Expr *expr;
+            LinkedList *expr;
 
         } varDef;
 
@@ -143,7 +141,7 @@ Command *ast_if_then_else(Expr *expr, Command* cmdIf, Command* cmdElse);
 
 Command *ast_expr(Expr *expr);
 
-Command *ast_var(char *name, Expr *expr);
+Command *ast_var(LinkedList *expr);
 
 Command *ast_compound(LinkedList *);
 
