@@ -9,14 +9,14 @@
 struct _Expr {
     enum {
         E_INTEGER,
-        E_NAME,
-        E_NAME_ADDR,
-        E_STRING,
-        E_OPERATION,
-        E_BOOL,
-        E_BOOL_VALUE,
-        E_ASSIGNMENT,
-        E_FUNC_CALL
+        E_NAME, //as
+        E_NAME_ADDR, // & x
+        E_STRING, // "teste"
+        E_OPERATION, //a + b
+        E_BOOL, // a < b
+        E_BOOL_VALUE, // true
+        E_ASSIGNMENT, // b = a
+        E_FUNC_CALL // ola()
     } kind;
 
     union {
@@ -49,13 +49,13 @@ struct _Expr {
 struct _Command {
 
     enum {
-        EMPTY_CMD = 0,
-        EXPR_CMD,
+        EMPTY_CMD = 0, //;
+        EXPR_CMD, //ola();
         WHILE_CMD,
         IF_CMD,
         IF_ELSE_CMD,
-        VAR_CMD,
-        COMPOUND_CMD
+        VAR_CMD, // var expr
+        COMPOUND_CMD // { }
     } command;
 
     union {
