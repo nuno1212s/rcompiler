@@ -26,6 +26,10 @@ LinkedList *mkEmptyList();
 
 LinkedList *mkList(void *value);
 
+void *getFirst(LinkedList *);
+
+LinkedList *concatLists(LinkedList *list1, LinkedList*list2);
+
 LinkedList *concatLast(LinkedList *list, void *value);
 
 LinkedList *concatStart(void *value, LinkedList *list);

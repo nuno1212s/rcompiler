@@ -67,6 +67,26 @@ LinkedList *concatStart(void *value, LinkedList *list) {
 
 }
 
+void *getFirst(LinkedList *list) {
+    if (list->size == 0) {
+        return NULL;
+    }
+
+    return list->first->value;
+}
+
+LinkedList *concatLists(LinkedList *list1, LinkedList *list2) {
+
+    list1->last->next = list2->first;
+    list1->last = list2->last;
+
+    list1->size += list2->size;
+
+    free(list2);
+
+    return list1;
+}
+
 void iterateList(LinkedList *list, void (*printFunc)(void *)) {
 
     Node *current = list->first;

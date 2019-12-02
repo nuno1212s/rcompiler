@@ -345,3 +345,40 @@ void printFuncS(Function *f, int spaces) {
 void printFunc(Function *f) {
     printFuncS(f, globalSpaces);
 }
+
+
+void printAtom(Atom *atom) {
+    switch (instr->atom->type) {
+        case A_VAR:
+            printf("%s", instr->atom->varName);
+            break;
+        case A_NUMBER:
+            printf("%d", instr->atom->value);
+            break;
+    }
+}
+
+void printInstr(Instr *instr) {
+
+    printf("%s := ", instr->finalValueName);
+
+    switch (instr->type) {
+        case I_ATOM: {
+            printAtom(instr->atom);
+            printf("\n");
+            break;
+        }
+        case I_BINOM: {
+
+            printAtom(instr->binom.atom1);
+
+            printf("%s", getName(instr->binom.operator));
+
+            printAtom(instr->binom.atom2);
+
+            printf("\n");
+            break;
+        }
+    }
+
+}

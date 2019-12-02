@@ -2,6 +2,7 @@
 #define COMPILADORES_PRINTABSTREE_H
 
 #include "abstree.h"
+#include "code.h"
 
 void printExpr(Expr *);
 
@@ -14,5 +15,7 @@ void printCmdS(Command *, int);
 void printFunc(Function *);
 
 void printFuncS(Function *, int);
+
+void printInstr(Instr *);
 
 #endif //COMPILADORES_PRINTABSTREE_H
