@@ -18,11 +18,13 @@ struct Instr_ {
         I_LAB
     } type;
 
-    char *finalValueName;
+    int finalValue;
 
     union {
 
         struct Atom_ *atom;
+
+        char *labelName;
 
         struct {
 
@@ -30,6 +32,16 @@ struct Instr_ {
 
             int operator;
         } binom;
+
+        struct {
+
+            char *labelIfTrue, *labelIfFalse;
+
+            int operator, variable;
+
+            Atom *atom;
+
+        } if_else;
 
     };
 
@@ -39,7 +51,8 @@ struct Atom_ {
 
     enum {
         A_VAR,
-        A_NUMBER
+        A_NUMBER,
+        A_TEMP
     } type;
 
     union {
@@ -54,14 +67,20 @@ typedef struct Instr_ Instr;
 
 typedef struct Atom_ Atom;
 
-LinkedList *compileExp(Expr *e, char *result);
+LinkedList *compileExpr(int finalValue, Expr *e);
 
 Atom *compileNumber(int num);
 
 Atom *compileVar(char *name);
 
-Instr *compileAtom(char *name, Atom *atom);
+Atom *compileTemp(int tmp);
 
-Instr *compileExpr(char *name, Expr *);
+Instr *initGoto(char *name);
+
+Instr *initLabel(char *name);
+
+Instr *initIfElse()
+
+Instr *compileAtom(int, Atom *atom);
 
 #endif //COMPILADORES_CODE_H

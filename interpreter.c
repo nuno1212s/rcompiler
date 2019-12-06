@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "parser.h"
 #include "printAbsTree.h"
+#include "code.h"
 
 int eval(Expr *expr) {
     int result = 0;
@@ -66,8 +67,20 @@ int main(int argc, char **argv) {
     } //  yyin = stdin
 
     if (yyparse() == 0) {
-        printFunc(root);
+//        printFunc(root);
     }
+
+    char *name = "x";
+    Expr *e = ast_operation(MINUS, ast_name(name), ast_operation(MULT, ast_integer(2), ast_integer(5)) );
+
+    printExpr(e);
+
+    LinkedList *l = compileExpr(1, e);
+
+    printf("Printing the Instrs\n");
+    printf("%d\n", l->size);
+
+    printInstrs(l);
 
     return 0;
 

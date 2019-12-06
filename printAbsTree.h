@@ -18,4 +18,6 @@ void printFuncS(Function *, int);
 
 void printInstr(Instr *);
 
+void printInstrs(LinkedList *);
+
 #endif //COMPILADORES_PRINTABSTREE_H

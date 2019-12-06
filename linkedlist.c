@@ -19,7 +19,9 @@ Node *initNode(void *value, Node *next) {
 Node *initNodeWithPrev(void *value, Node *next, Node *prev) {
     Node *node = initNode(value, next);
 
-    prev->next = node;
+    if (prev != NULL) {
+        prev->next = node;
+    }
 
     return node;
 }
@@ -35,6 +37,8 @@ void eraseNode(Node *node, Node *prev, Node *next) {
 LinkedList *mkEmptyList() {
     LinkedList *list = (LinkedList *) malloc(sizeof(LinkedList));
 
+    list->first = NULL;
+    list->last = NULL;
     list->size = 0;
 
     return list;
@@ -54,17 +58,28 @@ LinkedList *mkList(void *value) {
 }
 
 LinkedList *concatLast(LinkedList *list, void *value) {
-
     list->last = initNodeWithPrev(value, NULL, list->last);
+
+    if (list->size == 0) {
+        list->first = list->last;
+    }
+
     list->size++;
 
+    return list;
 }
 
 LinkedList *concatStart(void *value, LinkedList *list) {
 
     list->first = initNode(value, list->first);
+
+    if (list->size == 0) {
+        list->last = list->first;
+    }
+
     list->size++;
 
+    return list;
 }
 
 void *getFirst(LinkedList *list) {
@@ -75,7 +90,21 @@ void *getFirst(LinkedList *list) {
     return list->first->value;
 }
 
+void *getLast(LinkedList *list) {
+    if (list->size == 0) {
+        return NULL;
+    }
+
+    return list->last->value;
+}
+
 LinkedList *concatLists(LinkedList *list1, LinkedList *list2) {
+
+    if (list2->size == 0) {
+        free(list2);
+
+        return list1;
+    }
 
     list1->last->next = list2->first;
     list1->last = list2->last;

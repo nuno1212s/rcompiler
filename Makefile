@@ -1,8 +1,7 @@
-
 OBJS=scanner.o parser.o abstree.o interpreter.o linkedlist.o printAbsTree.o code.o
 INTERM=scanner.c parser.c parser.h
 PROGRAM=./interpreter
-CFLAGS=-g 
+CFLAGS=-g
 
 all: $(PROGRAM)
 

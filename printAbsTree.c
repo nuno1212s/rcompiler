@@ -42,7 +42,6 @@ void printArgs(Expr *expr) {
     printf(",");
 }
 
-
 char *getName(int operator) {
 
     if (oprStr == NULL) {
@@ -144,7 +143,7 @@ void printExprS(Expr *expr, int spaces) {
             printf("%s\n", expr->attr.value ? "TRUE" : "FALSE");
             break;
         case E_OPERATION:
-        case E_BOOL:{
+        case E_BOOL: {
             printSpaces(spaces);
 
             printf("%s\n", getName(expr->attr.op.operator));
@@ -165,7 +164,7 @@ void printExprS(Expr *expr, int spaces) {
             printf("%s(\n", expr->attr.funcCall.functionName);
             int previousSpaces = globalSpaces;
             globalSpaces = spaces + 1;
-            iterateList(expr->attr.funcCall.args, (void (*)(void *))  printExpr);
+            iterateList(expr->attr.funcCall.args, (void (*)(void *)) printExpr);
             globalSpaces = previousSpaces;
             printSpaces(spaces);
             printf(")\n");
@@ -348,19 +347,22 @@ void printFunc(Function *f) {
 
 
 void printAtom(Atom *atom) {
-    switch (instr->atom->type) {
+    switch (atom->type) {
         case A_VAR:
-            printf("%s", instr->atom->varName);
+            printf("%s", atom->varName);
             break;
         case A_NUMBER:
-            printf("%d", instr->atom->value);
+            printf("%d", atom->value);
+            break;
+        case A_TEMP:
+            printf("t%d", atom->value);
             break;
     }
 }
 
 void printInstr(Instr *instr) {
 
-    printf("%s := ", instr->finalValueName);
+    printf("t%d := ", instr->finalValue);
 
     switch (instr->type) {
         case I_ATOM: {
@@ -369,7 +371,6 @@ void printInstr(Instr *instr) {
             break;
         }
         case I_BINOM: {
-
             printAtom(instr->binom.atom1);
 
             printf("%s", getName(instr->binom.operator));
@@ -380,5 +381,11 @@ void printInstr(Instr *instr) {
             break;
         }
     }
+
+}
+
+void printInstrs(LinkedList *list) {
+
+    iterateList(list, (void (*)(void *)) printInstr);
 
 }
