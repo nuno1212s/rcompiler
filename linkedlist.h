@@ -36,6 +36,10 @@ LinkedList *concatLast(LinkedList *list, void *value);
 
 LinkedList *concatStart(void *value, LinkedList *list);
 
+LinkedList *dropLast(LinkedList *list);
+
+LinkedList *dropFirst(LinkedList *list);
+
 void iterateList(LinkedList *, void (*)(void *));
 
 #endif //COMPILADORES_LINKEDLIST_H

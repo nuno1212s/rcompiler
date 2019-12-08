@@ -98,12 +98,77 @@ void *getLast(LinkedList *list) {
     return list->last->value;
 }
 
+LinkedList* dropFirst(LinkedList *list) {
+    if (list->size == 0) {
+        return list;
+    }
+    if (list->size == 1) {
+        free(list->first);
+
+        list->last = NULL;
+        list->first = NULL;
+
+        list->size = 0;
+
+        return list;
+    }
+
+    Node *first = list->first;
+
+    list->first = list->first->next;
+
+    free(first);
+
+    return list;
+}
+
+LinkedList* dropLast(LinkedList *list) {
+
+    if (list->size == 0) {
+        return list;
+    }
+
+    if (list->size == 1) {
+
+        free(list->last);
+
+        list->last = NULL;
+        list->first = NULL;
+
+        list->size = 0;
+
+        return list;
+    }
+
+    Node *last = list->last;
+
+    Node * first = list->first;
+
+    while (first->next != last) {
+        first = first->next;
+    }
+
+    list->last = first;
+
+    list->last->next = NULL;
+
+    list->size --;
+
+    free(last);
+
+    return list;
+}
+
 LinkedList *concatLists(LinkedList *list1, LinkedList *list2) {
 
     if (list2->size == 0) {
         free(list2);
 
         return list1;
+    } else if (list1->size == 0) {
+        free(list1);
+
+        return list2;
     }
 
     list1->last->next = list2->first;

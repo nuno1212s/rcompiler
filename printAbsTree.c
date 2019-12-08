@@ -361,16 +361,21 @@ void printAtom(Atom *atom) {
 }
 
 void printInstr(Instr *instr) {
-
-    printf("t%d := ", instr->finalValue);
-
     switch (instr->type) {
+        case I_ARG: {
+            printf("a%d := ", instr->finalValue);
+            printAtom(instr->atom);
+            printf("\n");
+            break;
+        }
         case I_ATOM: {
+            printf("t%d := ", instr->finalValue);
             printAtom(instr->atom);
             printf("\n");
             break;
         }
         case I_BINOM: {
+            printf("t%d := ", instr->finalValue);
             printAtom(instr->binom.atom1);
 
             printf("%s", getName(instr->binom.operator));
@@ -378,6 +383,10 @@ void printInstr(Instr *instr) {
             printAtom(instr->binom.atom2);
 
             printf("\n");
+            break;
+        }
+        case I_GOTO: {
+            printf("GOTO %s\n", instr->labelName);
             break;
         }
     }

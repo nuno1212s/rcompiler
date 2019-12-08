@@ -15,7 +15,8 @@ struct Instr_ {
         I_BINOM,
         I_GOTO,
         I_IF_ELSE,
-        I_LAB
+        I_LAB,
+        I_ARG
     } type;
 
     int finalValue;
@@ -37,9 +38,9 @@ struct Instr_ {
 
             char *labelIfTrue, *labelIfFalse;
 
-            int operator, variable;
+            int operator;
 
-            Atom *atom;
+            struct Atom_ *atom1, *atom2;
 
         } if_else;
 
@@ -67,7 +68,7 @@ typedef struct Instr_ Instr;
 
 typedef struct Atom_ Atom;
 
-LinkedList *compileExpr(int finalValue, Expr *e);
+LinkedList *compileExpr(Expr *e, int *);
 
 Atom *compileNumber(int num);
 
@@ -79,8 +80,8 @@ Instr *initGoto(char *name);
 
 Instr *initLabel(char *name);
 
-Instr *initIfElse()
+Instr *compileAtom(Atom *atom, int *);
 
-Instr *compileAtom(int, Atom *atom);
+Instr *compileArg(Atom *, int *);
 
 #endif //COMPILADORES_CODE_H
