@@ -16,7 +16,8 @@ struct Instr_ {
         I_GOTO,
         I_IF_ELSE,
         I_LAB,
-        I_ARG
+        I_ARG,
+        I_WHILE
     } type;
 
     int finalValue;
@@ -69,6 +70,8 @@ typedef struct Instr_ Instr;
 typedef struct Atom_ Atom;
 
 LinkedList *compileExpr(Expr *e, int *);
+
+LinkedList *compileCmd(Command *cmd);
 
 Atom *compileNumber(int num);
 

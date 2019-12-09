@@ -97,10 +97,23 @@ Instr *initGoto(char *name) {
     return instr;
 }
 
+char *getLabelName() {
+
+    char lab_name[64];
+
+    sprintf(lab_name, "LAB%d", labCounter++);
+
+    char *lab_name_dup = strdup(lab_name);
+
+    return lab_name_dup;
+}
+
 Instr *initLabel(char *name) {
     Instr *instr = initGoto(name);
 
     instr->type = I_LAB;
+
+    return instr;
 }
 
 LinkedList *compileExpr(Expr *expr, int *finalValue) {
@@ -211,27 +224,20 @@ LinkedList *compileCmd(Command *cmd) {
 
             list = concatLists(exprList, list);
 
-            Instr* instr = getLast(list);
+            Instr *instr = getLast(list);
 
             dropLast(list);
 
-            char lab_name[64];
+            char *labName = getLabelName(), *labNameFalse = getLabelName();
 
-            sprintf(lab_name, "LAB%d", labCounter++);
-
-            char *lab_name_dup = strdup(lab_name);
-
-            Instr *lab = initLabel(lab_name_dup);
+            Instr *lab = initLabel(labName);
 
             LinkedList *cmdList = compileCmd(cmd->attr.ifCmd.cmd);
 
-            sprintf(lab_name, "LAB%d", labCounter++);
+            Instr *falseLab = initLabel(labNameFalse);
 
-            char *lab_name_false_dup = strdup(lab_name);
-
-            Instr *falseLab = initLabel(lab_name_false_dup);
-
-            Instr *if_instr = compileIf(instr->binom.atom1, instr->binom.atom2, instr->binom.operator, lab_name_dup, lab_name_false_dup);
+            Instr *if_instr = initIf(instr->binom.atom1, instr->binom.atom2, instr->binom.operator, labName,
+                                     labNameFalse);
 
             concatLast(list, if_instr);
 
@@ -240,6 +246,99 @@ LinkedList *compileCmd(Command *cmd) {
             list = concatLists(list, cmdList);
 
             concatLast(list, falseLab);
+            break;
+        }
+        case IF_ELSE_CMD: {
+
+            int result = 0;
+
+            LinkedList *exprList = compileExpr(cmd->attr.ifCmd.expr, &result);
+
+            list = concatLists(exprList, list);
+
+            Instr *last_instr = getLast(list);
+
+            dropLast(list);
+
+            char *labName = getLabelName(), *labNameFalse = getLabelName();
+
+            Instr *lab = initLabel(labName);
+
+            LinkedList *cmdList = compileCmd(cmd->attr.ifElseCmd.cmd),
+                    *cmdFalse = compileCmd(cmd->attr.ifElseCmd.elsecmd);
+
+            Instr *falseLab = initLabel(labNameFalse);
+
+            Instr *if_instr = initIf(last_instr->binom.atom1, last_instr->binom.atom2, last_instr->binom.operator, labName,
+                                     labNameFalse);
+
+            concatLast(list, if_instr);
+
+            concatLast(list, lab);
+
+            list = concatLists(list, cmdList);
+
+            concatLast(list, falseLab);
+
+            list = concatLists(list, cmdFalse);
+
+            break;
+        }
+        case WHILE_CMD: {
+
+            char *whileLabName = getLabelName(), *startOfWhile = getLabelName(), *endOfWhile = getLabelName();
+
+            Instr *whileLabel = initLabel(whileLabName);
+
+            int result = 0;
+
+            LinkedList *exprList = compileExpr(cmd->attr.whileCmd.expr, &result);
+
+            Instr *finalInstr = getLast(exprList);
+
+            dropLast(exprList);
+
+            Instr *if_instr = initIf(finalInstr->binom.atom1, finalInstr->binom.atom2, finalInstr->binom.operator, startOfWhile, endOfWhile);
+
+            Instr *startOfWhileInstr = initLabel(startOfWhile);
+
+            Instr *endOfWhileInstr = initLabel(endOfWhile);
+
+            LinkedList *cmd_list = compileCmd(cmd->attr.whileCmd.cmd);
+
+            Instr *go_to = initGoto(whileLabName);
+
+            list = concatLast(list, whileLabel);
+
+            list = concatLists(list, exprList);
+
+            concatLast(list, if_instr);
+
+            concatLast(list, startOfWhileInstr);
+
+            list = concatLists(list, cmd_list);
+
+            concatLast(list, go_to);
+
+            concatLast(list, endOfWhileInstr);
+
+            break;
+        }
+        case COMPOUND_CMD: {
+
+            LinkedList *cmdList = cmd->attr.compound.commands;
+
+            Node *first = cmdList->first;
+
+            while (first != NULL) {
+
+                LinkedList *compiledCmd = compileCmd(first->value);
+
+                list = concatLists(lists, compiledCmd);
+
+                first = first->next;
+            }
+
             break;
         }
     }

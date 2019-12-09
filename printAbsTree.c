@@ -389,6 +389,21 @@ void printInstr(Instr *instr) {
             printf("GOTO %s\n", instr->labelName);
             break;
         }
+
+        case I_LAB: {
+            printf("LABEL %s\n", instr->labelName);
+            break;
+        }
+
+        case I_IF_ELSE: {
+            printf("IF ");
+
+            printAtom(instr->if_else.atom1);
+            printf(" %s ", getName(instr->if_else.operator));
+            printAtom(instr->if_else.atom2);
+            printf(" THEN %s ELSE %s\n", instr->if_else.labelIfTrue, instr->if_else.labelIfFalse);
+            break;
+        }
     }
 
 }

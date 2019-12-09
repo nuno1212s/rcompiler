@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
     }
 
     char *name = "x";
-    Expr *e = ast_operation(MINUS, ast_name(name), ast_operation(MULT, ast_integer(2), ast_integer(5)) );
+    Expr *e = ast_binary(GREATER, ast_name(name), ast_operation(MULT, ast_integer(2), ast_integer(5)));
 
     LinkedList *args = mkEmptyList();
 
@@ -80,11 +80,14 @@ int main(int argc, char **argv) {
 
     Expr *e2 = ast_funcCall("test", args);
 
-    printExpr(e2);
+    Command *cmd = ast_expr(e),
+            *cmd2 = ast_while(e, cmd);
+
+    printCmd(cmd2);
 
     int result = 0;
 
-    LinkedList *l = compileExpr(e2, &result);
+    LinkedList *l = compileCmd(cmd2);
 
     printf("Printing the Instrs\n");
     printf("%d\n", l->size);
