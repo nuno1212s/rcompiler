@@ -12,7 +12,7 @@ struct _Expr {
         E_NAME, //as
         E_NAME_ADDR, // & x
         E_STRING, // "teste"
-        E_OPERATION, //a + b
+        E_OPERATION, //a + bteste
         E_BOOL, // a < b
         E_BOOL_VALUE, // true
         E_ASSIGNMENT, // b = a

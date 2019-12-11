@@ -355,27 +355,27 @@ void printAtom(Atom *atom) {
             printf("%d", atom->value);
             break;
         case A_TEMP:
-            printf("t%d", atom->value);
+            printf("$t%d", atom->value);
+            break;
+        case A_ARG:
+            printf("$a%d", atom->value);
+            break;
+        case A_VAR_ADDR:
+            printf("$&%s", atom->varName);
             break;
     }
 }
 
 void printInstr(Instr *instr) {
     switch (instr->type) {
-        case I_ARG: {
-            printf("a%d := ", instr->finalValue);
-            printAtom(instr->atom);
-            printf("\n");
-            break;
-        }
         case I_ATOM: {
-            printf("t%d := ", instr->finalValue);
+            printf("$t%d := ", instr->finalValue);
             printAtom(instr->atom);
             printf("\n");
             break;
         }
         case I_BINOM: {
-            printf("t%d := ", instr->finalValue);
+            printf("$t%d := ", instr->finalValue);
             printAtom(instr->binom.atom1);
 
             printf("%s", getName(instr->binom.operator));
@@ -397,11 +397,21 @@ void printInstr(Instr *instr) {
 
         case I_IF_ELSE: {
             printf("IF ");
-
             printAtom(instr->if_else.atom1);
             printf(" %s ", getName(instr->if_else.operator));
             printAtom(instr->if_else.atom2);
             printf(" THEN %s ELSE %s\n", instr->if_else.labelIfTrue, instr->if_else.labelIfFalse);
+            break;
+        }
+        case I_ATRIB: {
+            printAtom(instr->atrib.atom1);
+
+            printf(" := ");
+
+            printAtom(instr->atrib.atom2);
+
+            printf("\n");
+
             break;
         }
     }

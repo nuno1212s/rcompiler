@@ -67,32 +67,44 @@ int main(int argc, char **argv) {
     } //  yyin = stdin
 
     if (yyparse() == 0) {
-//        printFunc(root);
+        printFunc(root);
     }
 
-    char *name = "x";
-    Expr *e = ast_binary(GREATER, ast_name(name), ast_operation(MULT, ast_integer(2), ast_integer(5)));
+    LinkedList *functionList = compileFunction(root);
 
-    LinkedList *args = mkEmptyList();
+    printInstrs(functionList);
 
-    concatLast(args, e);
-    concatLast(args, e);
-
-    Expr *e2 = ast_funcCall("test", args);
-
-    Command *cmd = ast_expr(e),
-            *cmd2 = ast_while(e, cmd);
-
-    printCmd(cmd2);
-
-    int result = 0;
-
-    LinkedList *l = compileCmd(cmd2);
-
-    printf("Printing the Instrs\n");
-    printf("%d\n", l->size);
-
-    printInstrs(l);
+//
+//
+//    char *name = "x";
+//    Expr *e = ast_binary(GREATER, ast_name(name), ast_operation(MULT, ast_integer(2), ast_integer(5)));
+//
+//    LinkedList *args = mkEmptyList();
+//
+//    concatLast(args, e);
+//    concatLast(args, e);
+//
+//    Expr *e2 = ast_funcCall("test", args);
+//
+//    LinkedList *atribs = mkEmptyList();
+//
+//    Expr *assignment = ast_assignment("x", ast_binary(PLUS, ast_integer(10), ast_integer(5)));
+//
+//    concatLast(atribs, assignment);
+//
+//    Command *cmd = ast_var(atribs),
+//            *cmd2 = ast_while(e, cmd);
+//
+//    printCmd(cmd2);
+//
+//    int result = 0;
+//
+//    LinkedList *l = compileCmd(cmd2);
+//
+//    printf("Printing the Instrs\n");
+//    printf("%d\n", l->size);
+//
+//    printInstrs(l);
 
     return 0;
 

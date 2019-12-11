@@ -11,6 +11,7 @@
 int globalCounter = 1;
 int argCounter = 1;
 int labCounter = 1;
+int returnCounter = 1;
 
 Atom *compileInt(int value) {
 
@@ -34,11 +35,31 @@ Atom *compileVar(char *varName) {
     return atom;
 }
 
+Atom *compileVarAddr(char *varName) {
+    Atom *atom = malloc(sizeof(Atom));
+
+    atom->type = A_VAR_ADDR;
+
+    atom->varName = varName;
+
+    return atom;
+}
+
 Atom *compileTemp(int num) {
 
     Atom *atom = malloc(sizeof(Atom));
 
     atom->type = A_TEMP;
+
+    atom->value = num;
+
+    return atom;
+}
+
+Atom *compileArgAtom(int num) {
+    Atom *atom = malloc(sizeof(Atom));
+
+    atom->type = A_ARG;
 
     atom->value = num;
 
@@ -62,11 +83,12 @@ Instr *compileAtom(Atom *atom, int *finalValue) {
 Instr *compileArg(Atom *atom, int *finalValue) {
     Instr *instr = malloc(sizeof(Instr));
 
-    instr->finalValue = argCounter++;
-    *(finalValue) = argCounter - 1;
-    instr->type = I_ARG;
+    instr->type = I_ATRIB;
 
-    instr->atom = atom;
+    instr->atrib.atom1 = compileArgAtom(argCounter++);
+    instr->atrib.atom2 = atom;
+
+    *(finalValue) = argCounter - 1;
 
     return instr;
 }
@@ -132,6 +154,10 @@ LinkedList *compileExpr(Expr *expr, int *finalValue) {
             instr->type = I_ATOM;
             instr->atom = compileVar(expr->attr.name);
             break;
+        case E_NAME_ADDR:
+            instr->type = I_ATOM;
+            instr->atom = compileVarAddr(expr->attr.name);
+            break;
         case E_OPERATION:
         case E_BOOL:
             instr->type = I_BINOM;
@@ -156,8 +182,24 @@ LinkedList *compileExpr(Expr *expr, int *finalValue) {
             instr->atom = compileVar(expr->attr.name);
             break;
         case E_ASSIGNMENT:
-            //TODO: ??
-            break;
+
+            instr->type = I_ATRIB;
+
+            instr->atrib.atom1 = compileVar(expr->attr.assignment.name);
+
+            int result = 0;
+
+            LinkedList *cmdList = compileExpr(expr->attr.assignment.value, &result);
+
+            instr->atrib.atom2 = compileTemp(result);
+
+            list = concatLists(cmdList, list);
+
+            list = concatLast(list, instr);
+
+            instr->finalValue = -1;
+
+            return list;
         case E_FUNC_CALL:
             instr->type = I_GOTO;
             instr->labelName = expr->attr.funcCall.functionName;
@@ -187,6 +229,8 @@ LinkedList *compileExpr(Expr *expr, int *finalValue) {
 
                 first = first->next;
             }
+
+            argCounter = 1;
 
             list = concatLists(list, argList);
 
@@ -334,7 +378,26 @@ LinkedList *compileCmd(Command *cmd) {
 
                 LinkedList *compiledCmd = compileCmd(first->value);
 
-                list = concatLists(lists, compiledCmd);
+                list = concatLists(list, compiledCmd);
+
+                first = first->next;
+            }
+
+            break;
+        }
+        case VAR_CMD: {
+
+            LinkedList *cmdList = cmd->attr.varDef.expr;
+
+            Node *first = cmdList->first;
+
+            while (first != NULL) {
+
+                int result = 0;
+
+                LinkedList *compiledExpr = compileExpr(first->value, &result);
+
+                list = concatLists(list, compiledExpr);
 
                 first = first->next;
             }
@@ -342,6 +405,38 @@ LinkedList *compileCmd(Command *cmd) {
             break;
         }
     }
+
+    return list;
+}
+
+LinkedList *compileFunction(Function *func) {
+
+    LinkedList *list = mkEmptyList();
+
+    Instr *instrs = initLabel(func->name);
+
+    concatLast(list, instrs);
+
+    Node *first = func->args->first;
+
+    while (first != NULL) {
+
+        Instr* instr = malloc(sizeof(Instr));
+
+        instr->type = I_ATRIB;
+
+        instr->atrib.atom1 = compileVar(first->value);
+
+        instr->atrib.atom2 = compileArgAtom(argCounter++);
+
+        concatLast(list, instr);
+
+        first = first->next;
+    }
+
+    argCounter = 1;
+
+    list = concatLists(list, compileCmd(func->command));
 
     return list;
 }

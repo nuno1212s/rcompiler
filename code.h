@@ -16,8 +16,8 @@ struct Instr_ {
         I_GOTO,
         I_IF_ELSE,
         I_LAB,
-        I_ARG,
-        I_WHILE
+        I_WHILE,
+        I_ATRIB
     } type;
 
     int finalValue;
@@ -27,6 +27,12 @@ struct Instr_ {
         struct Atom_ *atom;
 
         char *labelName;
+
+        struct {
+
+            struct Atom_ *atom1, *atom2;
+
+        } atrib;
 
         struct {
 
@@ -54,7 +60,10 @@ struct Atom_ {
     enum {
         A_VAR,
         A_NUMBER,
-        A_TEMP
+        A_TEMP,
+        A_ARG,
+        A_RETURN,
+        A_VAR_ADDR
     } type;
 
     union {
@@ -73,11 +82,15 @@ LinkedList *compileExpr(Expr *e, int *);
 
 LinkedList *compileCmd(Command *cmd);
 
+LinkedList* compileFunction(Function *);
+
 Atom *compileNumber(int num);
 
 Atom *compileVar(char *name);
 
 Atom *compileTemp(int tmp);
+
+Atom *compileArgAtom(int num);
 
 Instr *initGoto(char *name);
 
@@ -85,6 +98,8 @@ Instr *initLabel(char *name);
 
 Instr *compileAtom(Atom *atom, int *);
 
-Instr *compileArg(Atom *, int *);
+Instr *compileArg(Atom *atom, int *);
+
+
 
 #endif //COMPILADORES_CODE_H

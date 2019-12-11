@@ -1,1 +1,7 @@
-fn main() 1 + 1;
+fn read_line(a) {
+
+    var b = (a + 1);
+
+    read_line(&a);
+
+}
