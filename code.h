@@ -12,12 +12,12 @@ struct Instr_ {
 
     enum {
         I_ATOM,
+        I_ATRIB,
         I_BINOM,
         I_GOTO,
         I_IF_ELSE,
         I_LAB,
         I_WHILE,
-        I_ATRIB,
         I_READ,
         I_PRINT
     } type;

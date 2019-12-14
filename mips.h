@@ -22,9 +22,23 @@ struct MIPSInstr_ {
 
         M_DECLARE_VAR,
         M_DECLARE_STRING,
-        M_LOAD_INTO_VAR,
-        M_LOAD_INTO_REG,
-        M_ADD
+        M_LOAD_INTO_VAR_CONST,
+        M_LOAD_INTO_VAR_OTHER,
+        M_LOAD_INTO_REG_CONST,
+        M_LOAD_INTO_REG_VAR,
+        M_ADD,
+        M_SUB,
+        M_DIV,
+        M_MULT,
+        M_REMAINDER,
+        M_EQ,
+        M_NOT_EQ,
+        M_LESS,
+        M_GREATER,
+        M_LESSEQ,
+        M_GREATEREQ,
+        M_AND,
+        M_OR
 
     } type;
 
@@ -42,7 +56,7 @@ struct MIPSInstr_ {
 
             Atom *to, *part1, *part2;
 
-        } add;
+        } operation;
 
     } value;
 
