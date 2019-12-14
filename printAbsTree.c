@@ -363,6 +363,9 @@ void printAtom(Atom *atom) {
         case A_VAR_ADDR:
             printf("$&%s", atom->varName);
             break;
+        case A_STRING:
+            printf("\"%s\"", atom->stringValue);
+            break;
     }
 }
 
@@ -414,6 +417,24 @@ void printInstr(Instr *instr) {
 
             break;
         }
+        case I_READ: {
+            printf("READ ");
+
+            printAtom(instr->atom);
+
+            printf("\n");
+
+            break;
+        }
+        case I_PRINT: {
+            printf("PRINT ");
+
+            printAtom(instr->print.toPrint);
+
+            printf("\n");
+
+            break;
+        }
     }
 
 }
@@ -421,5 +442,11 @@ void printInstr(Instr *instr) {
 void printInstrs(LinkedList *list) {
 
     iterateList(list, (void (*)(void *)) printInstr);
+
+}
+
+void printMIPS(MIPSFunction *function) {
+
+
 
 }

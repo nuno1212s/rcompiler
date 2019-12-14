@@ -1,7 +1,10 @@
-fn read_line(a) {
+fn main() {
 
-    var b = (a + 1);
+    let d = (a + b + 20 + 10);
 
-    read_line(&a);
+    while (a < 20) {
+        c = (c + 1);
+    }
 
+    read_line(&b);
 }

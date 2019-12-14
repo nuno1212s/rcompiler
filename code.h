@@ -17,7 +17,9 @@ struct Instr_ {
         I_IF_ELSE,
         I_LAB,
         I_WHILE,
-        I_ATRIB
+        I_ATRIB,
+        I_READ,
+        I_PRINT
     } type;
 
     int finalValue;
@@ -27,6 +29,12 @@ struct Instr_ {
         struct Atom_ *atom;
 
         char *labelName;
+
+        struct {
+
+            struct Atom_ *toPrint;
+
+        } print;
 
         struct {
 
@@ -63,13 +71,16 @@ struct Atom_ {
         A_TEMP,
         A_ARG,
         A_RETURN,
-        A_VAR_ADDR
+        A_VAR_ADDR,
+        A_STRING
     } type;
 
     union {
         int value;
 
         char *varName;
+
+        char *stringValue;
     };
 
 };
@@ -92,6 +103,8 @@ Atom *compileTemp(int tmp);
 
 Atom *compileArgAtom(int num);
 
+Atom *compileString(char *string);
+
 Instr *initGoto(char *name);
 
 Instr *initLabel(char *name);
@@ -99,7 +112,5 @@ Instr *initLabel(char *name);
 Instr *compileAtom(Atom *atom, int *);
 
 Instr *compileArg(Atom *atom, int *);
-
-
 
 #endif //COMPILADORES_CODE_H

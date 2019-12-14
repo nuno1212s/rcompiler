@@ -3,6 +3,7 @@
 
 #include "abstree.h"
 #include "code.h"
+#include "mips.h"
 
 void printExpr(Expr *);
 
@@ -19,5 +20,7 @@ void printFuncS(Function *, int);
 void printInstr(Instr *);
 
 void printInstrs(LinkedList *);
+
+void printMIPS(MIPSFunction *);
 
 #endif //COMPILADORES_PRINTABSTREE_H

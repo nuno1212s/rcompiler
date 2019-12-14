@@ -8,10 +8,21 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "printAbsTree.h"
+
 int globalCounter = 1;
 int argCounter = 1;
 int labCounter = 1;
 int returnCounter = 1;
+
+typedef enum {
+
+    WHILE,
+    LAB,
+    IF,
+    ELSE
+
+} LABEL_TYPE;
 
 Atom *compileInt(int value) {
 
@@ -62,6 +73,17 @@ Atom *compileArgAtom(int num) {
     atom->type = A_ARG;
 
     atom->value = num;
+
+    return atom;
+}
+
+Atom *compileString(char *string) {
+
+    Atom *atom = malloc(sizeof(Atom));
+
+    atom->type = A_STRING;
+
+    atom->stringValue = string;
 
     return atom;
 }
@@ -119,11 +141,32 @@ Instr *initGoto(char *name) {
     return instr;
 }
 
-char *getLabelName() {
+char *getLabelName(LABEL_TYPE t) {
 
     char lab_name[64];
 
-    sprintf(lab_name, "LAB%d", labCounter++);
+    switch (t) {
+
+        case LAB: {
+            sprintf(lab_name, "LAB%d", labCounter++);
+            break;
+        }
+
+        case WHILE: {
+            sprintf(lab_name, "WHILE%d", labCounter++);
+            break;
+        }
+
+        case IF: {
+            sprintf(lab_name, "IF%d", labCounter++);
+            break;
+        }
+        case ELSE: {
+            sprintf(lab_name, "ELSE%d", labCounter++);
+            break;
+        }
+
+    }
 
     char *lab_name_dup = strdup(lab_name);
 
@@ -138,11 +181,60 @@ Instr *initLabel(char *name) {
     return instr;
 }
 
+LinkedList *compilePrint(Expr *print) {
+
+    LinkedList *list = mkEmptyList();
+
+    Instr *instr = malloc(sizeof(Instr));
+
+    instr->type = I_PRINT;
+
+    int result = 0;
+
+    LinkedList *cmdList = compileExpr(print->attr.funcCall.args->first->value, &result);
+
+    instr->print.toPrint = compileTemp(result);
+
+    //Remove the used temp
+    globalCounter--;
+
+    list = concatLists(cmdList, list);
+
+    concatLast(list, instr);
+
+    return list;
+}
+
+LinkedList *compileRead(Expr *print) {
+    LinkedList *list = mkEmptyList();
+
+    Instr *instr = malloc(sizeof(Instr));
+
+    instr->type = I_READ;
+
+    int result = 0;
+
+    LinkedList *cmdList = compileExpr(print->attr.funcCall.args->first->value, &result);
+
+    instr->atom = compileTemp(result);
+
+    //Remove the used temp
+    globalCounter--;
+
+    list = concatLists(cmdList, list);
+
+    concatLast(list, instr);
+
+    return list;
+}
+
 LinkedList *compileExpr(Expr *expr, int *finalValue) {
 
     LinkedList *list = mkEmptyList();
 
     Instr *instr = malloc(sizeof(Instr));
+
+    int usedTemps = 0;
 
     switch (expr->kind) {
         case E_INTEGER:
@@ -158,6 +250,10 @@ LinkedList *compileExpr(Expr *expr, int *finalValue) {
             instr->type = I_ATOM;
             instr->atom = compileVarAddr(expr->attr.name);
             break;
+        case E_STRING:
+            instr->type = I_ATOM;
+            instr->atom = compileString(expr->attr.name);
+            break;
         case E_OPERATION:
         case E_BOOL:
             instr->type = I_BINOM;
@@ -168,6 +264,8 @@ LinkedList *compileExpr(Expr *expr, int *finalValue) {
 
             LinkedList *right = compileExpr(expr->attr.op.right, &rightSideValue);
 
+            usedTemps += 2;
+
             instr->binom.atom1 = compileTemp(leftSideValue);
             instr->binom.atom2 = compileTemp(rightSideValue);
 
@@ -177,30 +275,37 @@ LinkedList *compileExpr(Expr *expr, int *finalValue) {
 
             list = concatLists(left, list);
             break;
-        case E_STRING:
-            instr->type = I_ATOM;
-            instr->atom = compileVar(expr->attr.name);
-            break;
         case E_ASSIGNMENT:
 
             instr->type = I_ATRIB;
-
-            instr->atrib.atom1 = compileVar(expr->attr.assignment.name);
 
             int result = 0;
 
             LinkedList *cmdList = compileExpr(expr->attr.assignment.value, &result);
 
+            usedTemps++;
+
+            instr->atrib.atom1 = compileVar(expr->attr.assignment.name);
+
             instr->atrib.atom2 = compileTemp(result);
 
             list = concatLists(cmdList, list);
 
-            list = concatLast(list, instr);
-
-            instr->finalValue = -1;
-
-            return list;
+            break;
         case E_FUNC_CALL:
+
+            if (strcmp(expr->attr.funcCall.functionName, "println!") == 0) {
+
+                free(instr);
+
+                return compilePrint(expr);
+            } else if (strcmp(expr->attr.funcCall.functionName, "read_line") == 0) {
+
+                free(instr);
+
+                return compileRead(expr);
+            }
+
             instr->type = I_GOTO;
             instr->labelName = expr->attr.funcCall.functionName;
 
@@ -238,6 +343,8 @@ LinkedList *compileExpr(Expr *expr, int *finalValue) {
             break;
     }
 
+    globalCounter -= usedTemps;
+
     instr->finalValue = globalCounter++;
 
     *finalValue = globalCounter - 1;
@@ -251,11 +358,14 @@ LinkedList *compileCmd(Command *cmd) {
 
     LinkedList *list = mkEmptyList();
 
+    int usedTemps = 0;
+
     switch (cmd->command) {
         case EXPR_CMD: {
             int result = 0;
             LinkedList *exprList = compileExpr(cmd->attr.value, &result);
 
+            usedTemps ++;
             list = concatLists(exprList, list);
 
             break;
@@ -272,7 +382,9 @@ LinkedList *compileCmd(Command *cmd) {
 
             dropLast(list);
 
-            char *labName = getLabelName(), *labNameFalse = getLabelName();
+            usedTemps++;
+
+            char *labName = getLabelName(IF), *labNameFalse = getLabelName(ELSE);
 
             Instr *lab = initLabel(labName);
 
@@ -304,7 +416,9 @@ LinkedList *compileCmd(Command *cmd) {
 
             dropLast(list);
 
-            char *labName = getLabelName(), *labNameFalse = getLabelName();
+            usedTemps++;
+
+            char *labName = getLabelName(IF), *labNameFalse = getLabelName(ELSE);
 
             Instr *lab = initLabel(labName);
 
@@ -330,7 +444,7 @@ LinkedList *compileCmd(Command *cmd) {
         }
         case WHILE_CMD: {
 
-            char *whileLabName = getLabelName(), *startOfWhile = getLabelName(), *endOfWhile = getLabelName();
+            char *whileLabName = getLabelName(WHILE), *startOfWhile = getLabelName(IF), *endOfWhile = getLabelName(ELSE);
 
             Instr *whileLabel = initLabel(whileLabName);
 
@@ -341,6 +455,8 @@ LinkedList *compileCmd(Command *cmd) {
             Instr *finalInstr = getLast(exprList);
 
             dropLast(exprList);
+
+            usedTemps++;
 
             Instr *if_instr = initIf(finalInstr->binom.atom1, finalInstr->binom.atom2, finalInstr->binom.operator, startOfWhile, endOfWhile);
 
@@ -399,12 +515,16 @@ LinkedList *compileCmd(Command *cmd) {
 
                 list = concatLists(list, compiledExpr);
 
+                usedTemps++;
+
                 first = first->next;
             }
 
             break;
         }
     }
+
+    globalCounter -= usedTemps;
 
     return list;
 }
@@ -434,9 +554,18 @@ LinkedList *compileFunction(Function *func) {
         first = first->next;
     }
 
-    argCounter = 1;
-
     list = concatLists(list, compileCmd(func->command));
+
+    char *gotoReturn = strdup("$ra");
+
+    Instr *instr = initGoto(gotoReturn);
+
+    concatLast(list, instr);
+
+    argCounter = 1;
+    globalCounter = 1;
+    labCounter = 1;
+    returnCounter = 1;
 
     return list;
 }
