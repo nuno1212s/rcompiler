@@ -49,7 +49,11 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
 
                 if (a1->type == A_VAR) {
 
-                    insert(data, a1->varName, NULL);
+                    if (a2->type == A_STRING) {
+                        insert(data, a1->varName, a2->stringValue);
+                    } else {
+                        insert(data, a1->varName, NULL);
+                    }
 
                 } else if (a1->type == A_TEMP) {
 
@@ -60,7 +64,8 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
 
                     if (instr->atrib.atom2->type == A_VAR) {
                         if (!containsKey(data, instr->atrib.atom2->varName)) {
-                            fprinf(stderr, "Failed to translate ATRIB instr, var %s is not declared previously.\n", instr->atrib.atom2->varName);
+                            fprinf(stderr, "Failed to translate ATRIB instr, var %s is not declared previously.\n",
+                                   instr->atrib.atom2->varName);
                             return NULL;
                         }
                     }
@@ -116,7 +121,6 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
                     case MULT:
                         mipsInstr->type = M_MULT;
                         break;
-                        case
                     case REMAIN:
                         mipsInstr->type = M_REMAINDER;
                         break;
