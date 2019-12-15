@@ -34,6 +34,7 @@
   FALSE
 
 // Operator associativity & precedence
+%left ASSIGNMENT
 %left AND OR BAND BOR
 %left EQUAL NOTEQUAL LESS GREATER LESSEQ GREATEREQ
 %left PLUS MINUS
