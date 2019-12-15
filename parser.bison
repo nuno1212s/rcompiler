@@ -34,20 +34,12 @@
   FALSE
 
 // Operator associativity & precedence
-%left PLUS
-%left MINUS
-%left MULT
-%left DIV
-%left REMAIN
-%left GREATER
-%left LESS
-%left EQUAL
-%left NOTEQUAL
-%left GREATEREQ
-%left LESSEQ
+%left AND OR BAND BOR
+%left EQUAL NOTEQUAL LESS GREATER LESSEQ GREATEREQ
+%left PLUS MINUS
+%left MULT DIV REMAIN
+
 %left COMMA
-%left AND
-%left OR
 
 // Root-level grammar symbol
 %start program;

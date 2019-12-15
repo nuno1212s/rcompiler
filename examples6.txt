@@ -8,6 +8,8 @@ fn main() {
 
     let lasd = a && d || c;
 
+    let novoteste = a < c && d > a;
+
     read_line(&c);
 
     let n = 0;
