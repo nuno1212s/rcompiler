@@ -37,8 +37,8 @@
 %left ASSIGNMENT
 %left AND OR BAND BOR
 %left EQUAL NOTEQUAL LESS GREATER LESSEQ GREATEREQ
-%left PLUS MINUS
 %left MULT DIV REMAIN
+%left PLUS MINUS
 
 %left COMMA
 
@@ -113,6 +113,10 @@ cmd_list:
   cmd {
     //printf("Command\n");
     $$ = mkList($1);
+  }
+  |
+  {
+    $$ = mkEmptyList();
   }
   ;
 

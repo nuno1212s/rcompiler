@@ -15,7 +15,8 @@ typedef enum {
     L_WHILE,
     L_LAB,
     L_IF,
-    L_ELSE
+    L_ELSE,
+    L_PRINT
 
 } LABEL_TYPE;
 
@@ -171,6 +172,10 @@ char *getLabelName(LABEL_TYPE t) {
             sprintf(lab_name, "ELSE%d", labCounter++);
             break;
         }
+        case L_PRINT: {
+            sprintf(lab_name, "PRINT%d", labCounter++);
+            break;
+        }
 
     }
 
@@ -207,14 +212,31 @@ LinkedList *compilePrint(Expr *print) {
 
     int result = 0;
 
-    LinkedList *cmdList = compileExpr(print->attr.funcCall.args->first->value, &result);
+    Expr *expr = (Expr *) print->attr.funcCall.args->first->value;
 
-    instr->print.toPrint = compileTemp(result);
+    if (expr->kind == E_STRING) {
 
-    //Remove the used temp
-//    globalCounter--;
+        Instr *separateText = malloc(sizeof(Instr));
 
-    list = concatLists(cmdList, list);
+        separateText->type = I_ATRIB;
+
+        Atom *atom = compileVar(getLabelName(L_PRINT)), *a2 = compileString(expr->attr.name);
+
+        separateText->atrib.atom1 = atom;
+        separateText->atrib.atom2 = a2;
+
+        concatLast(list, separateText);
+
+        instr->print.toPrint = atom;
+
+    } else {
+
+        LinkedList *cmdList = compileExpr(print->attr.funcCall.args->first->value, &result);
+
+        instr->print.toPrint = compileTemp(result);
+
+        list = concatLists(cmdList, list);
+    }
 
     concatLast(list, instr);
 
@@ -387,10 +409,11 @@ LinkedList *compileCmd(Command *cmd) {
 
     switch (cmd->command) {
         case EXPR_CMD: {
-            int result = 0;
+            int result = -1;
             LinkedList *exprList = compileExpr(cmd->attr.value, &result);
 
-            usedTemps++;
+            if (result != -1)
+                usedTemps++;
             list = concatLists(exprList, list);
 
             break;
