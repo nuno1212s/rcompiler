@@ -1,8 +1,8 @@
 fn main() {
 
-    if (n > 2 && n < 5) {
-        let a = 1;
-    }
+    let x;
+
+    x = x + 1;
 
     while (a > 2 && a < 3 ) {
         let b = 2;

@@ -440,7 +440,7 @@ LinkedList *compileCmd(Command *cmd) {
                 globalCounter--;
 
                 if_instr = initIf(compileTemp(instr->finalValue), compileInt(1), EQUAL, labName,
-                         labNameFalse);
+                                  labNameFalse);
             } else {
 
                 dropLast(list);
@@ -493,7 +493,8 @@ LinkedList *compileCmd(Command *cmd) {
 
                 globalCounter--;
 
-                if_instr = initIf(last_instr->binom.atom1, last_instr->binom.atom2, last_instr->binom.operator, labName, labNameFalse);
+                if_instr = initIf(last_instr->binom.atom1, last_instr->binom.atom2, last_instr->binom.operator, labName,
+                                  labNameFalse);
 
             }
 
@@ -531,14 +532,15 @@ LinkedList *compileCmd(Command *cmd) {
                 globalCounter--;
 
                 if_instr = initIf(compileTemp(finalInstr->finalValue), compileInt(1), EQUAL, startOfWhile,
-                       endOfWhile);
+                                  endOfWhile);
             } else {
 
                 dropLast(exprList);
 
                 globalCounter--;
 
-                if_instr = initIf(finalInstr->binom.atom1, finalInstr->binom.atom2, finalInstr->binom.operator, startOfWhile, endOfWhile);
+                if_instr = initIf(finalInstr->binom.atom1, finalInstr->binom.atom2, finalInstr->binom.operator,
+                                  startOfWhile, endOfWhile);
 
             }
 
@@ -593,11 +595,27 @@ LinkedList *compileCmd(Command *cmd) {
 
                 int result = 0;
 
-                LinkedList *compiledExpr = compileExpr(first->value, &result);
+                Expr *expr = (Expr *)first->value;
 
-                list = concatLists(list, compiledExpr);
+                if (expr->kind == E_NAME) {
 
-                usedTemps++;
+                    Instr * instr = malloc(sizeof(Instr));
+
+                    instr->type = I_ATRIB;
+
+                    instr->atrib.atom1 = compileVar(expr->attr.name);
+
+                    instr->atrib.atom2 = compileInt(0);
+
+                    concatLast(list, instr);
+
+                } else {
+                    LinkedList *compiledExpr = compileExpr(first->value, &result);
+
+                    list = concatLists(list, compiledExpr);
+
+                    usedTemps++;
+                }
 
                 first = first->next;
             }
