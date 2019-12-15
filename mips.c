@@ -21,6 +21,23 @@ MIPSFunction *initMipsFunction(HTable *data, LinkedList *text) {
     return func;
 }
 
+int checkVar(Atom *atom, HTable *table) {
+
+    if (atom->type == A_VAR) {
+
+        if (!containsKey(table, atom->varName)) {
+
+            fprintf(stderr, "Failed to translate ATRIB instr, var %s is not declared previously.\n",
+                    atom->varName);
+
+            return 0;
+        }
+
+    }
+
+    return 1;
+}
+
 MIPSFunction *translateThreeRegisters(LinkedList *commands) {
 
     LinkedList *text = mkEmptyList();
@@ -71,12 +88,8 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
 
                     mipsInstr->type = M_LOAD_INTO_REG_VAR;
 
-                    if (instr->atrib.atom2->type == A_VAR) {
-                        if (!containsKey(data, instr->atrib.atom2->varName)) {
-                            fprintf(stderr, "Failed to translate ATRIB instr, var %s is not declared previously.\n",
-                                    instr->atrib.atom2->varName);
-                            return NULL;
-                        }
+                    if (!checkVar(instr->atrib.atom2, data)) {
+                        return NULL;
                     }
 
                     mipsInstr->value.var.from = instr->atrib.atom2;
@@ -97,6 +110,11 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
                     }
 
                     mipsInstr->value.var.to = a1;
+
+                    if (!checkVar(a2, data)) {
+                        return NULL;
+                    }
+
                     mipsInstr->value.var.from = a2;
 
                     concatLast(text, mipsInstr);
@@ -123,7 +141,10 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
                     mipsInstr->type = M_LOAD_ADRESS_INTO_REG;
                 }
 
-                //TODO: Deal with string values.
+                if (!checkVar(instr->atom, data)) {
+                    return NULL;
+                }
+
                 mipsInstr->value.var.from = instr->atom;
 
                 concatLast(text, mipsInstr);
@@ -170,10 +191,9 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
                     case NOTEQUAL:
                         mipsInstr->type = M_NOT_EQ;
                         break;
-                    case BAND: {
+                    case BAND:
                         mipsInstr->type = M_AND;
                         break;
-                    }
                     case BOR:
                         mipsInstr->type = M_OR;
                         break;
@@ -181,6 +201,11 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
                 }
 
                 mipsInstr->value.operation.to = compileTemp(instr->finalValue);
+
+                if (!checkVar(instr->binom.atom1,data) || !checkVar(instr->binom.atom2, data)) {
+                    return NULL;
+                }
+
                 mipsInstr->value.operation.part1 = instr->binom.atom1;
                 mipsInstr->value.operation.part2 = instr->binom.atom2;
 
@@ -225,6 +250,10 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
 
                 mipsInstr->value.ifS.operator = instr->if_else.operator;
 
+                if (!checkVar(instr->if_else.atom1, data) || !checkVar(instr->if_else.atom2, data)) {
+                    return NULL;
+                }
+
                 mipsInstr->value.ifS.a1 = instr->if_else.atom1;
 
                 mipsInstr->value.ifS.a2 = instr->if_else.atom2;
@@ -263,6 +292,10 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
 
                 move->type = M_MOVE;
 
+                if (!checkVar(instr->atom, data)) {
+                    return NULL;
+                }
+
                 move->value.var.to = instr->atom;
 
                 move->value.var.from = compileArgAtom(0);
@@ -293,6 +326,10 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
                 }
 
                 setA->value.var.to = compileArgAtom(0);
+
+                if (!checkVar(instr->print.toPrint, data)) {
+                    return NULL;
+                }
 
                 setA->value.var.from = instr->print.toPrint;
 

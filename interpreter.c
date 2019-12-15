@@ -71,11 +71,13 @@ int main(int argc, char **argv) {
         printFunc(root);
     }
 
+    printf("\n\n\n INTERMEDIARY CODE: \n\n\n");
+
     LinkedList *functionList = compileFunction(root);
 
     printInstrs(functionList);
 
-    printf("\n\n\nMIPS::::\n\n\n");
+    printf("\n\n\n MIPS: \n\n\n");
 
     MIPSFunction *func = translateThreeRegisters(functionList);
 

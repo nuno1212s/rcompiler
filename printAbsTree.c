@@ -385,7 +385,7 @@ void printInstr(Instr *instr) {
             printf("$t%d := ", instr->finalValue);
             printAtom(instr->binom.atom1);
 
-            printf("%s", getName(instr->binom.operator));
+            printf(" %s ", getName(instr->binom.operator));
 
             printAtom(instr->binom.atom2);
 

@@ -257,7 +257,7 @@ LinkedList *compileRead(Expr *print) {
     instr->atom = compileTemp(result);
 
     //Remove the used temp
-//    globalCounter--;
+    globalCounter--;
 
     list = concatLists(cmdList, list);
 
@@ -428,21 +428,30 @@ LinkedList *compileCmd(Command *cmd) {
 
             Instr *instr = getLast(list);
 
-//            dropLast(list);
-
-//            globalCounter--;
-            usedTemps++;
-
             char *labName = getLabelName(L_IF), *labNameFalse = getLabelName(L_ELSE);
 
             Instr *lab = initLabel(labName);
 
-            LinkedList *cmdList = compileCmd(cmd->attr.ifCmd.cmd);
-
             Instr *falseLab = initLabel(labNameFalse);
 
-            Instr *if_instr = initIf(compileTemp(instr->finalValue), compileInt(1), EQUAL, labName,
-                                     labNameFalse);
+            Instr *if_instr;
+
+            if (instr->binom.operator == BAND || instr->binom.operator == BOR) {
+                globalCounter--;
+
+                if_instr = initIf(compileTemp(instr->finalValue), compileInt(1), EQUAL, labName,
+                         labNameFalse);
+            } else {
+
+                dropLast(list);
+
+                globalCounter--;
+
+                if_instr = initIf(instr->binom.atom1, instr->binom.atom2, instr->binom.operator, labName, labNameFalse);
+
+            }
+
+            LinkedList *cmdList = compileCmd(cmd->attr.ifCmd.cmd);
 
             concatLast(list, if_instr);
 
@@ -463,22 +472,33 @@ LinkedList *compileCmd(Command *cmd) {
 
             Instr *last_instr = getLast(list);
 
-//            dropLast(list);
-
-//            globalCounter--;
-            usedTemps++;
-
             char *labName = getLabelName(L_IF), *labNameFalse = getLabelName(L_ELSE);
 
             Instr *lab = initLabel(labName);
 
-            LinkedList *cmdList = compileCmd(cmd->attr.ifElseCmd.cmd),
-                    *cmdFalse = compileCmd(cmd->attr.ifElseCmd.elsecmd);
-
             Instr *falseLab = initLabel(labNameFalse);
 
-            Instr *if_instr = initIf(compileTemp(last_instr->finalValue), compileInt(1), EQUAL, labName,
-                                     labNameFalse);
+            Instr *if_instr;
+
+            if (last_instr->binom.operator == BAND || last_instr->binom.operator == BOR) {
+
+                globalCounter--;
+
+                if_instr = initIf(compileTemp(last_instr->finalValue), compileInt(1), EQUAL, labName,
+                                  labNameFalse);
+
+            } else {
+
+                dropLast(list);
+
+                globalCounter--;
+
+                if_instr = initIf(last_instr->binom.atom1, last_instr->binom.atom2, last_instr->binom.operator, labName, labNameFalse);
+
+            }
+
+            LinkedList *cmdList = compileCmd(cmd->attr.ifElseCmd.cmd),
+                    *cmdFalse = compileCmd(cmd->attr.ifElseCmd.elsecmd);
 
             concatLast(list, if_instr);
 
@@ -505,13 +525,22 @@ LinkedList *compileCmd(Command *cmd) {
 
             Instr *finalInstr = getLast(exprList);
 
-//            dropLast(exprList);
+            Instr *if_instr;
 
-//            globalCounter--;
-            usedTemps++;
+            if (finalInstr->binom.operator == BAND || finalInstr->binom.operator == BOR) {
+                globalCounter--;
 
-            Instr *if_instr = initIf(compileTemp(finalInstr->finalValue), compileInt(1), EQUAL, startOfWhile,
-                                     endOfWhile);
+                if_instr = initIf(compileTemp(finalInstr->finalValue), compileInt(1), EQUAL, startOfWhile,
+                       endOfWhile);
+            } else {
+
+                dropLast(exprList);
+
+                globalCounter--;
+
+                if_instr = initIf(finalInstr->binom.atom1, finalInstr->binom.atom2, finalInstr->binom.operator, startOfWhile, endOfWhile);
+
+            }
 
             Instr *startOfWhileInstr = initLabel(startOfWhile);
 
