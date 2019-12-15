@@ -46,8 +46,6 @@
 %left GREATEREQ
 %left LESSEQ
 %left COMMA
-%left BAND
-%left BOR
 %left AND
 %left OR
 

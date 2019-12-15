@@ -4,11 +4,11 @@ fn main() {
 
     let c = 0;
 
+    let d = "teste";
+
     read_line(&c);
 
-    let teste = "teste";
-
-    while (a < 20) {
+    while ((a < 20) || (c >= 0)) {
         c = (c + 1);
     }
 

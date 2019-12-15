@@ -170,9 +170,10 @@ MIPSFunction *translateThreeRegisters(LinkedList *commands) {
                     case NOTEQUAL:
                         mipsInstr->type = M_NOT_EQ;
                         break;
-                    case BAND:
+                    case BAND: {
                         mipsInstr->type = M_AND;
                         break;
+                    }
                     case BOR:
                         mipsInstr->type = M_OR;
                         break;

@@ -44,7 +44,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 79 "parser.bison"
+#line 77 "parser.bison"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,7 +105,7 @@ Function* root;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 58 "parser.bison"
+#line 56 "parser.bison"
 
   int intValue;
   char *nameValue, *strValue;

@@ -679,6 +679,40 @@ void printMIPSInstr(MIPSInstr *instr) {
             break;
         }
 
+        case M_AND: {
+            printf("and ");
+
+            printAtom(instr->value.operation.to);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part1);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part2);
+
+            printf("\n");
+            break;
+        }
+
+        case M_OR: {
+            printf("or ");
+
+            printAtom(instr->value.operation.to);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part1);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part2);
+
+            printf("\n");
+            break;
+        }
+
         case M_IF_ELSE: {
 
             switch (instr->value.ifS.operator) {
@@ -701,6 +735,7 @@ void printMIPSInstr(MIPSInstr *instr) {
                 case LESSEQ:
                     printf("ble ");
                     break;
+
             }
 
             printAtom(instr->value.ifS.a1);

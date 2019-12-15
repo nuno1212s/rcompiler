@@ -6,10 +6,10 @@
 
 #include "printAbsTree.h"
 
-int globalCounter = 1;
-int argCounter = 1;
-int labCounter = 1;
-int returnCounter = 1;
+int globalCounter = 0;
+int argCounter = 0;
+int labCounter = 0;
+int returnCounter = 0;
 
 typedef enum {
 
@@ -213,7 +213,7 @@ LinkedList *compilePrint(Expr *print) {
     instr->print.toPrint = compileTemp(result);
 
     //Remove the used temp
-    globalCounter--;
+//    globalCounter--;
 
     list = concatLists(cmdList, list);
 
@@ -236,7 +236,7 @@ LinkedList *compileRead(Expr *print) {
     instr->atom = compileTemp(result);
 
     //Remove the used temp
-    globalCounter--;
+//    globalCounter--;
 
     list = concatLists(cmdList, list);
 
@@ -298,15 +298,24 @@ LinkedList *compileExpr(Expr *expr, int *finalValue) {
 
             int result = 0;
 
-            LinkedList *cmdList = compileExpr(expr->attr.assignment.value, &result);
+            if (expr->attr.assignment.value->kind == E_STRING) {
 
-            usedTemps++;
+                instr->atrib.atom1 = compileVar(expr->attr.assignment.name);
 
-            instr->atrib.atom1 = compileVar(expr->attr.assignment.name);
+                instr->atrib.atom2 = compileString(expr->attr.assignment.value->attr.name);
 
-            instr->atrib.atom2 = compileTemp(result);
+            } else {
 
-            list = concatLists(cmdList, list);
+                LinkedList *cmdList = compileExpr(expr->attr.assignment.value, &result);
+
+                usedTemps++;
+
+                instr->atrib.atom1 = compileVar(expr->attr.assignment.name);
+
+                instr->atrib.atom2 = compileTemp(result);
+
+                list = concatLists(cmdList, list);
+            }
 
             break;
         case E_FUNC_CALL:
@@ -352,7 +361,7 @@ LinkedList *compileExpr(Expr *expr, int *finalValue) {
                 first = first->next;
             }
 
-            argCounter = 1;
+            argCounter = 0;
 
             list = concatLists(list, argList);
 
@@ -399,7 +408,7 @@ LinkedList *compileCmd(Command *cmd) {
 
             dropLast(list);
 
-            usedTemps++;
+            globalCounter--;
 
             char *labName = getLabelName(IF), *labNameFalse = getLabelName(ELSE);
 
@@ -433,7 +442,7 @@ LinkedList *compileCmd(Command *cmd) {
 
             dropLast(list);
 
-            usedTemps++;
+            globalCounter--;
 
             char *labName = getLabelName(IF), *labNameFalse = getLabelName(ELSE);
 
@@ -473,7 +482,7 @@ LinkedList *compileCmd(Command *cmd) {
 
             dropLast(exprList);
 
-            usedTemps++;
+            globalCounter--;
 
             Instr *if_instr = initIf(finalInstr->binom.atom1, finalInstr->binom.atom2, finalInstr->binom.operator, startOfWhile, endOfWhile);
 
@@ -579,10 +588,10 @@ LinkedList *compileFunction(Function *func) {
 
     concatLast(list, instr);
 
-    argCounter = 1;
-    globalCounter = 1;
-    labCounter = 1;
-    returnCounter = 1;
+    argCounter = 0;
+    globalCounter = 0;
+    labCounter = 0;
+    returnCounter = 0;
 
     return list;
 }
