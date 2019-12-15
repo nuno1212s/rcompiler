@@ -6,7 +6,15 @@ fn main() {
 
     let d = "teste";
 
+    let lasd = a && d || c;
+
     read_line(&c);
+
+    let n = 0;
+
+    if (((n % 2) == 0) || (((n % 3) == 0) && ((n % 4) == 1))) {
+        n = n + 1;
+    }
 
     while ((a < 20) || (c >= 0)) {
         c = (c + 1);

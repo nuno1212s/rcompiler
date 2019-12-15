@@ -488,7 +488,7 @@ void printKey(char *key) {
 
     if (get(printing, key) != NULL) {
 
-        printf("%s: .asciiz \"%s\"", key, (char*) get(printing, key));
+        printf("%s: .asciiz \"%s\"\n", key, (char*) get(printing, key));
 
     } else {
         printf("%s: .space 4\n", key);

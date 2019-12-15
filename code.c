@@ -1,10 +1,9 @@
 #include "code.h"
 #include "abstree.h"
+#include "parser.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
-#include "printAbsTree.h"
 
 int globalCounter = 0;
 int argCounter = 0;
@@ -13,10 +12,10 @@ int returnCounter = 0;
 
 typedef enum {
 
-    WHILE,
-    LAB,
-    IF,
-    ELSE
+    L_WHILE,
+    L_LAB,
+    L_IF,
+    L_ELSE
 
 } LABEL_TYPE;
 
@@ -154,21 +153,21 @@ char *getLabelName(LABEL_TYPE t) {
 
     switch (t) {
 
-        case LAB: {
+        case L_LAB: {
             sprintf(lab_name, "LAB%d", labCounter++);
             break;
         }
 
-        case WHILE: {
+        case L_WHILE: {
             sprintf(lab_name, "WHILE%d", labCounter++);
             break;
         }
 
-        case IF: {
+        case L_IF: {
             sprintf(lab_name, "IF%d", labCounter++);
             break;
         }
-        case ELSE: {
+        case L_ELSE: {
             sprintf(lab_name, "ELSE%d", labCounter++);
             break;
         }
@@ -391,7 +390,7 @@ LinkedList *compileCmd(Command *cmd) {
             int result = 0;
             LinkedList *exprList = compileExpr(cmd->attr.value, &result);
 
-            usedTemps ++;
+            usedTemps++;
             list = concatLists(exprList, list);
 
             break;
@@ -406,11 +405,12 @@ LinkedList *compileCmd(Command *cmd) {
 
             Instr *instr = getLast(list);
 
-            dropLast(list);
+//            dropLast(list);
 
-            globalCounter--;
+//            globalCounter--;
+            usedTemps++;
 
-            char *labName = getLabelName(IF), *labNameFalse = getLabelName(ELSE);
+            char *labName = getLabelName(L_IF), *labNameFalse = getLabelName(L_ELSE);
 
             Instr *lab = initLabel(labName);
 
@@ -418,7 +418,7 @@ LinkedList *compileCmd(Command *cmd) {
 
             Instr *falseLab = initLabel(labNameFalse);
 
-            Instr *if_instr = initIf(instr->binom.atom1, instr->binom.atom2, instr->binom.operator, labName,
+            Instr *if_instr = initIf(compileTemp(instr->finalValue), compileInt(1), EQUAL, labName,
                                      labNameFalse);
 
             concatLast(list, if_instr);
@@ -440,11 +440,12 @@ LinkedList *compileCmd(Command *cmd) {
 
             Instr *last_instr = getLast(list);
 
-            dropLast(list);
+//            dropLast(list);
 
-            globalCounter--;
+//            globalCounter--;
+            usedTemps++;
 
-            char *labName = getLabelName(IF), *labNameFalse = getLabelName(ELSE);
+            char *labName = getLabelName(L_IF), *labNameFalse = getLabelName(L_ELSE);
 
             Instr *lab = initLabel(labName);
 
@@ -453,7 +454,7 @@ LinkedList *compileCmd(Command *cmd) {
 
             Instr *falseLab = initLabel(labNameFalse);
 
-            Instr *if_instr = initIf(last_instr->binom.atom1, last_instr->binom.atom2, last_instr->binom.operator, labName,
+            Instr *if_instr = initIf(compileTemp(last_instr->finalValue), compileInt(1), EQUAL, labName,
                                      labNameFalse);
 
             concatLast(list, if_instr);
@@ -470,7 +471,8 @@ LinkedList *compileCmd(Command *cmd) {
         }
         case WHILE_CMD: {
 
-            char *whileLabName = getLabelName(WHILE), *startOfWhile = getLabelName(IF), *endOfWhile = getLabelName(ELSE);
+            char *whileLabName = getLabelName(L_WHILE), *startOfWhile = getLabelName(L_IF), *endOfWhile = getLabelName(
+                    L_ELSE);
 
             Instr *whileLabel = initLabel(whileLabName);
 
@@ -480,11 +482,13 @@ LinkedList *compileCmd(Command *cmd) {
 
             Instr *finalInstr = getLast(exprList);
 
-            dropLast(exprList);
+//            dropLast(exprList);
 
-            globalCounter--;
+//            globalCounter--;
+            usedTemps++;
 
-            Instr *if_instr = initIf(finalInstr->binom.atom1, finalInstr->binom.atom2, finalInstr->binom.operator, startOfWhile, endOfWhile);
+            Instr *if_instr = initIf(compileTemp(finalInstr->finalValue), compileInt(1), EQUAL, startOfWhile,
+                                     endOfWhile);
 
             Instr *startOfWhileInstr = initLabel(startOfWhile);
 
@@ -567,7 +571,7 @@ LinkedList *compileFunction(Function *func) {
 
     while (first != NULL) {
 
-        Instr* instr = malloc(sizeof(Instr));
+        Instr *instr = malloc(sizeof(Instr));
 
         instr->type = I_ATRIB;
 
