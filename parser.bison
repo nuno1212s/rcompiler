@@ -45,7 +45,6 @@
 %left NOTEQUAL
 %left GREATEREQ
 %left LESSEQ
-%left ASSIGNMENT
 %left COMMA
 %left BAND
 %left BOR

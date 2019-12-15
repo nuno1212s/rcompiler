@@ -1,34 +1,30 @@
-//
-// Created by nuno on 14/12/19.
-//
-
 #include "hashtable.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-int main() {
-
-    HTable *table = createHashTable();
-
-    char *n1 = "teste";
-
-    int i1 = 10;
-
-    insert(table, n1, &i1);
-
-    printf("%d\n", *((int*) get(table, n1)));
-
-    printf("%d\n", containsKey(table, n1));
-
-    delete(table, n1);
-
-    printf("%p\n", get(table, n1));
-
-    printf("%d\n", containsKey(table, n1));
-
-}
+//int main() {
+//
+//    HTable *table = createHashTable();
+//
+//    char *n1 = "teste";
+//
+//    int i1 = 10;
+//
+//    insert(table, n1, &i1);
+//
+//    printf("%d\n", *((int*) get(table, n1)));
+//
+//    printf("%d\n", containsKey(table, n1));
+//
+//    delete(table, n1);
+//
+//    printf("%p\n", get(table, n1));
+//
+//    printf("%d\n", containsKey(table, n1));
+//
+//}
 
 unsigned int
 keyHash(unsigned char *str) {
@@ -163,6 +159,26 @@ void delete(HTable *table, char *key) {
             table->table[hash] = NULL;
 
         dealloc(node);
+    }
+
+}
+
+void iterateKeys(HTable *table, void (*consumeKey)(char*)) {
+
+    for (int i = 0; i < MAX_SIZE; i++) {
+
+        if (table->table[i] == NULL) continue;
+
+        HNode *node = table->table[i];
+
+        while (node != NULL) {
+
+            consumeKey(node->key);
+
+            node = node->next;
+        }
+
+
     }
 
 }

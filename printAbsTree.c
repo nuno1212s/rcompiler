@@ -170,6 +170,7 @@ void printExprS(Expr *expr, int spaces) {
             printf(")\n");
             break;
         }
+
     }
 }
 
@@ -366,6 +367,9 @@ void printAtom(Atom *atom) {
         case A_STRING:
             printf("\"%s\"", atom->stringValue);
             break;
+        case A_FUNCTION_TYPE:
+            printf("$v%d", atom->value);
+            break;
     }
 }
 
@@ -435,6 +439,12 @@ void printInstr(Instr *instr) {
 
             break;
         }
+        case I_FUNCTION: {
+
+            printf("FUNC %s\n", instr->labelName);
+
+            break;
+        }
     }
 
 }
@@ -445,8 +455,282 @@ void printInstrs(LinkedList *list) {
 
 }
 
+HTable *printing;
+
+void printKey(char *);
+
+void printMIPSInstr(MIPSInstr *);
+
 void printMIPS(MIPSFunction *function) {
 
+    printf(".data\n");
 
+    printing = function->data;
+
+    iterateKeys(function->data, printKey);
+
+    printing = NULL;
+
+    printf("\n\n.text\n");
+
+    Node *node = function->text->first;
+
+    while (node != NULL) {
+
+        printMIPSInstr((MIPSInstr*)node->value);
+
+        node = node->next;
+    }
+
+}
+
+void printKey(char *key) {
+
+    if (get(printing, key) != NULL) {
+
+        printf("%s: .asciiz \"%s\"", key, (char*) get(printing, key));
+
+    } else {
+        printf("%s: .space 4\n", key);
+    }
+
+}
+
+void printMIPSInstr(MIPSInstr *instr) {
+
+
+    switch (instr->type) {
+
+        case M_FUNCTION: {
+            printf("%s:\n", instr->value.functionName);
+            break;
+        }
+        case M_LOAD_INTO_VAR_CONST: {
+
+            printf("sw ");
+
+            printAtom(instr->value.var.to);
+
+            printf(", ");
+
+            printAtom(instr->value.var.from);
+
+            printf("\n");
+            break;
+        }
+
+        case M_LOAD_INTO_VAR_OTHER: {
+
+            printf("sw ");
+
+            printAtom(instr->value.var.to);
+
+            printf(", ");
+
+            printAtom(instr->value.var.from);
+
+            printf("\n");
+
+            break;
+        }
+
+        case M_LOAD_INTO_REG_CONST: {
+
+            printf("li ");
+
+            printAtom(instr->value.var.to);
+
+            printf(", ");
+
+            printAtom(instr->value.var.from);
+
+            printf("\n");
+
+            break;
+        }
+
+        case M_LOAD_INTO_REG_VAR: {
+
+            printf("lw ");
+
+            printAtom(instr->value.var.to);
+
+            printf(", ");
+
+            printAtom(instr->value.var.from);
+
+            printf("\n");
+
+            break;
+        }
+
+        case M_LOAD_ADRESS_INTO_REG: {
+
+            printf("la ");
+
+            printAtom(instr->value.var.to);
+
+            printf(", ");
+
+            printAtom(instr->value.var.from);
+
+            printf("\n");
+
+            break;
+        }
+
+        case M_MOVE: {
+
+            printf("move ");
+
+            printAtom(instr->value.var.to);
+
+            printf(", ");
+
+            printAtom(instr->value.var.from);
+
+            printf("\n");
+
+            break;
+        }
+
+        case M_ADD: {
+
+            printf("add ");
+
+            printAtom(instr->value.operation.to);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part1);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part2);
+
+            printf("\n");
+
+            break;
+        }
+        case M_SUB: {
+            printf("sub ");
+
+            printAtom(instr->value.operation.to);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part1);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part2);
+
+            printf("\n");
+            break;
+        }
+
+        case M_DIV: {
+            printf("div ");
+
+            printAtom(instr->value.operation.to);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part1);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part2);
+
+            printf("\n");
+            break;
+        }
+
+        case M_MULT: {
+            printf("div ");
+
+            printAtom(instr->value.operation.to);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part1);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part2);
+
+            printf("\n");
+            break;
+        }
+        case M_REMAINDER: {
+            printf("rem ");
+
+            printAtom(instr->value.operation.to);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part1);
+
+            printf(", ");
+
+            printAtom(instr->value.operation.part2);
+
+            printf("\n");
+            break;
+        }
+
+        case M_IF_ELSE: {
+
+            switch (instr->value.ifS.operator) {
+
+                case EQUAL:
+                    printf("beq ");
+                    break;
+                case NOTEQUAL:
+                    printf("bne ");
+                    break;
+                case GREATER:
+                    printf("bgt ");
+                    break;
+                case GREATEREQ:
+                    printf("bge ");
+                    break;
+                case LESS:
+                    printf("blt ");
+                    break;
+                case LESSEQ:
+                    printf("ble ");
+                    break;
+            }
+
+            printAtom(instr->value.ifS.a1);
+
+            printf(", ");
+
+            printAtom(instr->value.ifS.a2);
+
+            printf(", %s\n", instr->value.ifS.labelIfTrue);
+
+            break;
+        }
+
+        case M_LABEL: {
+
+            printf("LABEL %s\n", instr->value.gotoName);
+
+            break;
+        }
+
+        case M_GOTO: {
+            printf("GOTO %s\n", instr->value.gotoName);
+            break;
+        }
+
+        case M_SYSCALL: {
+            printf("syscall\n");
+            break;
+        }
+
+    }
 
 }

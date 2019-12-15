@@ -1,7 +1,3 @@
-//
-// Created by nuno on 14/12/19.
-//
-
 #ifndef RCOMPILER_MASTER_HASHTABLE_H
 #define RCOMPILER_MASTER_HASHTABLE_H
 
@@ -36,5 +32,7 @@ void insert(HTable *, char *, void *);
 void *get(HTable *, char *);
 
 void delete(HTable *, char *);
+
+void iterateKeys(HTable*, void (*)(char*));
 
 #endif //RCOMPILER_MASTER_HASHTABLE_H

@@ -1,12 +1,9 @@
-//
-// Created by nuno on 14/12/19.
-//
-
 #ifndef RCOMPILER_MASTER_MIPS_H
 #define RCOMPILER_MASTER_MIPS_H
 
 #include "linkedlist.h"
 #include "hashtable.h"
+#include "code.h"
 
 struct Function_ {
 
@@ -26,6 +23,8 @@ struct MIPSInstr_ {
         M_LOAD_INTO_VAR_OTHER,
         M_LOAD_INTO_REG_CONST,
         M_LOAD_INTO_REG_VAR,
+        M_LOAD_ADRESS_INTO_REG,
+        M_MOVE,
         M_ADD,
         M_SUB,
         M_DIV,
@@ -38,13 +37,20 @@ struct MIPSInstr_ {
         M_LESSEQ,
         M_GREATEREQ,
         M_AND,
-        M_OR
+        M_OR,
+        M_SYSCALL,
+        M_GOTO,
+        M_LABEL,
+        M_IF_ELSE,
+        M_FUNCTION
 
     } type;
 
     union {
 
         char *varName;
+
+        char *functionName;
 
         struct {
 
@@ -57,6 +63,18 @@ struct MIPSInstr_ {
             Atom *to, *part1, *part2;
 
         } operation;
+
+        struct {
+
+            Atom *a1, *a2;
+
+            int operator;
+
+            char *labelIfTrue;
+
+        } ifS;
+
+        char *gotoName;
 
     } value;
 

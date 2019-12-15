@@ -1,7 +1,3 @@
-//
-// Created by nuno on 01/12/19.
-//
-
 #include "code.h"
 #include "abstree.h"
 #include <stdlib.h>
@@ -84,6 +80,17 @@ Atom *compileString(char *string) {
     atom->type = A_STRING;
 
     atom->stringValue = string;
+
+    return atom;
+}
+
+Atom *compileFuncType(int func) {
+
+    Atom *atom = malloc(sizeof(Atom));
+
+    atom->type = A_FUNCTION_TYPE;
+
+    atom->value = func;
 
     return atom;
 }
@@ -177,6 +184,16 @@ Instr *initLabel(char *name) {
     Instr *instr = initGoto(name);
 
     instr->type = I_LAB;
+
+    return instr;
+}
+
+Instr *initFunction(char *name) {
+
+    Instr *instr = malloc(sizeof(Function));
+
+    instr->type = I_FUNCTION;
+    instr->labelName = name;
 
     return instr;
 }
@@ -533,7 +550,7 @@ LinkedList *compileFunction(Function *func) {
 
     LinkedList *list = mkEmptyList();
 
-    Instr *instrs = initLabel(func->name);
+    Instr *instrs = initFunction(func->name);
 
     concatLast(list, instrs);
 

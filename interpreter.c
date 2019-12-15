@@ -2,6 +2,7 @@
 #include "parser.h"
 #include "printAbsTree.h"
 #include "code.h"
+#include "mips.h"
 
 int eval(Expr *expr) {
     int result = 0;
@@ -73,6 +74,12 @@ int main(int argc, char **argv) {
     LinkedList *functionList = compileFunction(root);
 
     printInstrs(functionList);
+
+    printf("\n\n\nMIPS::::\n\n\n");
+
+    MIPSFunction *func = translateThreeRegisters(functionList);
+
+    printMIPS(func);
 
 //
 //

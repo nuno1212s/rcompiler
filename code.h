@@ -1,6 +1,3 @@
-//
-// Created by nuno on 01/12/19.
-//
 
 #ifndef COMPILADORES_CODE_H
 #define COMPILADORES_CODE_H
@@ -17,9 +14,9 @@ struct Instr_ {
         I_GOTO,
         I_IF_ELSE,
         I_LAB,
-        I_WHILE,
         I_READ,
-        I_PRINT
+        I_PRINT,
+        I_FUNCTION
     } type;
 
     int finalValue;
@@ -72,7 +69,8 @@ struct Atom_ {
         A_ARG,
         A_RETURN,
         A_VAR_ADDR,
-        A_STRING
+        A_STRING,
+        A_FUNCTION_TYPE
     } type;
 
     union {
@@ -95,7 +93,7 @@ LinkedList *compileCmd(Command *cmd);
 
 LinkedList* compileFunction(Function *);
 
-Atom *compileNumber(int num);
+Atom *compileInt(int num);
 
 Atom *compileVar(char *name);
 
@@ -104,6 +102,8 @@ Atom *compileTemp(int tmp);
 Atom *compileArgAtom(int num);
 
 Atom *compileString(char *string);
+
+Atom* compileFuncType(int func);
 
 Instr *initGoto(char *name);
 

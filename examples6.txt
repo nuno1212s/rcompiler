@@ -1,10 +1,16 @@
 fn main() {
 
-    let d = (a + b + 20 + 10);
+    let a = 1 + 1;
+
+    let c = 0;
+
+    read_line(&c);
+
+    let teste = "teste";
 
     while (a < 20) {
         c = (c + 1);
     }
 
-    read_line(&b);
+    println!(c);
 }
